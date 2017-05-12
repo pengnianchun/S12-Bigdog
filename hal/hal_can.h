@@ -1,6 +1,5 @@
 #ifndef _HAL_CAN_
 #define _HAL_CAN_
-
 typedef void (*func_type)(uint32_t,uint8_t,uint8_t,uint8_t *);
 
 #define STANDARD     0x0

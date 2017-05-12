@@ -20,7 +20,7 @@
 /*   Code, declarations and definitions here will be preserved during code generation */
 /* End of user declarations and definitions */
 
-/*
+/*             
 ** ===================================================================
 **     Method      :  MCU_init
 **
@@ -30,16 +30,19 @@
 */
 void MCU_init(void)
 {
-/* Select "Generate Code" to create initialization code here */
-} /*MCU_init*/
-
-
-
-extern near void _Startup(void);       /* reset interrupt service routine */
-
-void (* near const _vect[])() @0xFFFE = { /* RESET Interrupt vector */
-        _Startup
-};
+  DisableInterrupts;
+  System_init(); 
+  Hal_Port_Init();
+  ID_Select();          
+  //Hal_Pwm_Init();
+  Hal_Spi_Init();
+  initialize_TIM() ;
+  //hal_api_init(); 
+  hal_adc_init(); 
+  hal_can_init(&can_receive_protocol);          
+  //hal_irq_init(); 
+  EnableInterrupts;
+}
 
 
 /* END */

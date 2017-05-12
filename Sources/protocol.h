@@ -80,7 +80,7 @@ typedef struct
 }ID_45_TYPE;
 
 extern ID_6A4_TYPE  ID_6A4_data;
-
+extern ID_68_TYPE  ID_681_data;
 void can_receive_protocol(uint32_t ID,uint8_t mode,uint8_t length,uint8_t *data);
 void ID_Select(void);
 #endif

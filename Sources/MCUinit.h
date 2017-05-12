@@ -16,6 +16,25 @@
 #ifndef __mcuinit_H
 #define __mcuinit_H 1
 
+#include <hidef.h>     
+#include "derivative.h"
+#include "hal_system.h" 
+#include "global.h"
+#include "hal_adc.h"
+#include "hal_can.h"
+#include "hal_ect.h"
+#include "hal_int.h"
+#include "hal_port.h"  
+#include "hal_pwm.h"  
+#include "hal_spi.h"
+#include "protocol.h" 
+
+
+
+
+
+
+
 /* User declarations and definitions */
 /*   Code, declarations and definitions here will be preserved during code generation */
 /* End of user declarations and definitions */

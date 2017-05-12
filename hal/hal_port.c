@@ -1,7 +1,6 @@
 #include <MC9S12G128.h>   
 
 void Hal_Port_Init(void)
-
  {
  //===========================prot s=========================================//  
   /* ### Init_GPIO init code */

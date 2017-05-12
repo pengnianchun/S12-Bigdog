@@ -1,8 +1,6 @@
 #include <MC9S12G128.h> 
 #include <hidef.h> 
-#include "hal_system.h"
-#include "hal_port.h" 
-#include "hal_can.h"
+#include "MCUinit.h"
 extern void near _Startup(void);
 
 #pragma CODE_SEG __NEAR_SEG NON_BANKED
@@ -69,63 +67,15 @@ __interrupt void isr_default(void)
 **     Returns     : Nothing
 ** ===================================================================
 */
-uint16_t g_time_200ms=0,g_time0_50ms=0,g_time1_500ms=1,g_time2_100ms=2,g_time3_1000ms=3,g_time4_100ms=4;
 
 __interrupt void isrVapi(void)
 {
-  /* Write your interrupt code here ... */
-  CPMUAPICTL_APIF=1;
-  g_time_200ms++;
-  g_time0_50ms++;
-  g_time1_500ms++;
-  g_time2_100ms++;
-  g_time3_1000ms++;
-  g_time4_100ms++;
-  if(g_time0_50ms>=10) 
-  {
-  g_time0_50ms=0;
-  can_50ms_process0();
-  }
-  
-  if(g_time1_500ms>=100) 
-  {
-  g_time1_500ms=0;
-  can_500ms_process1();
-  }
-  
-  if(g_time2_100ms>=20) 
-  {
-  g_time2_100ms=0;
-  can_100ms_process2();
-  }
-  
-  if(g_time3_1000ms>=200) 
-  {
-  g_time3_1000ms=0;
-  can_1000ms_process3();
-  }
-  
-  if(g_time4_100ms>=20) 
-  {
-  g_time4_100ms=0;
-  can_100ms_process4();
-  }
-  
-  if(g_time_200ms==40) 
-  {
-  g_time_200ms=0;
-  fre_200ms_process();
-  }
-  
 }
 /* end of isrVapi */
 
 __interrupt void isrVcanrx(void)
 {
- 
-  
   hal_can_receive();
-  
   CANRFLG = 0x01;   /* Clear RXF */ 
 }
 /* end of isrVcanrx */
@@ -143,12 +93,92 @@ __interrupt void isrVcanrx(void)
 __interrupt void isrVportj(void)
 {
 
-  
+ 
   /* Write your interrupt code here ... */
   pulse_count(); 
   PIFJ_PIFJ5=1;
 }
-
+/*
+** ===================================================================
+**     Interrupt handler : isrVtimch0
+**
+**     Description :
+**     	    通道0输入捕捉                             . 
+**     Parameters  : None
+**     Returns     : Nothing
+** ===================================================================
+*/
+vu16  pulse_temp[2];//捕捉的脉冲数
+__interrupt void ivVtimch0(void)
+{
+	static unsigned int cont0;
+    unsigned int temp;
+    temp = TC0;
+    capture[0] = temp - cont0;
+	pulse_temp[0]++;
+    cont0 = temp;
+	if(TFLG1_C0F == 1)
+	{
+	    TFLG1_C0F = 1;
+	}
+}
+/* end of isrVtimch0 */
+/*
+** ===================================================================
+**     Interrupt handler : isrVtimch1
+**
+**     Description :
+**     		通道1输入捕捉                             . 
+**     Parameters  : None
+**     Returns     : Nothing
+** ===================================================================
+*/
+__interrupt void ivVtimch1(void)
+{
+  static unsigned int cont1;
+  unsigned int temp;
+  temp = TC1;
+  capture[1] = temp - cont1;
+  pulse_temp [1]++;
+  cont1 = temp;
+  if(TFLG1_C1F == 1)
+  {
+    TFLG1_C1F = 1;
+  }
+}
+/* end of isrVtimch1 */
+/*
+** ===================================================================
+**     Interrupt handler : isrVtimch2
+**
+**     Description :
+**     		完成定时任务. 
+**     Parameters  : None
+**     Returns     : Nothing
+** ===================================================================
+*/
+__interrupt void ivVtimch2(void)
+{
+	static u16 cont = 0;;
+	cont++;
+	
+	if(cont>10000){
+	  cont = 0;
+	  pulse[0] = pulse_temp[0];
+	  pulse[1] = pulse_temp[1];
+	  pulse_temp[0] = pulse_temp[1] = 0;
+	}
+  
+  if(TFLG1_C2F == 1)
+  {
+    TFLG1_C2F = 1;
+    TC2 = TCNT + ECT_TC1_IDX;         //设置输出比较时间为0.0001s
+  }
+  TimeOutConfig = 1;
+  RunTime++;
+  
+}
+/* end of isrVtimch2 */
 
  #pragma CODE_SEG DEFAULT
 
@@ -159,7 +189,7 @@ typedef void (*near tIsrFunc)(void);
   #define UNASSIGNED_ISR isr_default   /* unassigned interrupt service routine */
 #endif
 /*lint -save  -e950 Disable MISRA rule (1.1) checking. */
-static const tIsrFunc _InterruptVectorTable[] @0xFF80U = { /* Interrupt vector table */
+static const tIsrFunc _InterruptVectorTable[]  @0xFF80U= { /* Interrupt vector table */
 /*lint -restore Enable MISRA rule (1.1) checking. */
   /* ISR name                               No.  Address  Name          Description */
   &UNASSIGNED_ISR,                      /* 0x40  0xFF80   ivVsi         unused by PE */
@@ -215,24 +245,20 @@ static const tIsrFunc _InterruptVectorTable[] @0xFF80U = { /* Interrupt vector t
   &UNASSIGNED_ISR,                      /* 0x72  0xFFE4   ivVtimch5     unused by PE */
   &UNASSIGNED_ISR,                      /* 0x73  0xFFE6   ivVtimch4     unused by PE */
   &UNASSIGNED_ISR,                      /* 0x74  0xFFE8   ivVtimch3     unused by PE */
-  &UNASSIGNED_ISR,                      /* 0x75  0xFFEA   ivVtimch2     unused by PE */
-  &UNASSIGNED_ISR,                      /* 0x76  0xFFEC   ivVtimch1     unused by PE */
-  &UNASSIGNED_ISR,                      /* 0x77  0xFFEE   ivVtimch0     unused by PE */
+  &ivVtimch2,                           /* 0x75  0xFFEA   ivVtimch2     unused by PE */
+  &ivVtimch1,                           /* 0x76  0xFFEC   ivVtimch1     unused by PE */
+  &ivVtimch0,                           /* 0x77  0xFFEE   ivVtimch0     unused by PE */
   &UNASSIGNED_ISR,                      /* 0x78  0xFFF0   ivVrti        unused by PE */
   &UNASSIGNED_ISR,                      /* 0x79  0xFFF2   ivVirq        unused by PE */
   &UNASSIGNED_ISR,                      /* 0x7A  0xFFF4   ivVxirq       unused by PE */
   &UNASSIGNED_ISR,                      /* 0x7B  0xFFF6   ivVswi        unused by PE */
-  &UNASSIGNED_ISR                       /* 0x7C  0xFFF8   ivVtrap       unused by PE */
-};
-
-/*lint -save  -e950 Disable MISRA rule (1.1) checking. */
-static const tIsrFunc _ResetVectorTable[] @0xFFFAU = { /* Reset vector table */
-/*lint -restore Enable MISRA rule (1.1) checking. */
-  /* Reset handler name                    Address Name           Description */
+  &UNASSIGNED_ISR,                       /* 0x7C  0xFFF8   ivVtrap       unused by PE */
   &MCU_init_reset,                      /* 0xFFFA  ivVcop         unused by PE */
   &MCU_init_reset,                      /* 0xFFFC  ivVclkmon      unused by PE */
   &MCU_init_reset                       /* 0xFFFE  ivVreset       used by PE */
 };
+
+
 
 #pragma CODE_SEG DEFAULT
 #pragma MESSAGE DISABLE C12056
