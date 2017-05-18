@@ -1,7 +1,6 @@
 #include <MC9S12G128.h>   
 #include "hal_system.h"
 #include "Hal_ect.h"
-#include "Hal_system.h"
 
 #if (CLOCK_BUS != 24000000)
 #error("时钟不匹配需要重新配置寄存器");
@@ -19,9 +18,8 @@ void initialize_TIM(void)
   PACTL = 0x50;          //始能脉冲累加器，累加上升沿
   TSCR1_TFFCA = 1;         // 定时器标志位快速清除
   TSCR1_TEN = 1;           // 定时器使能位. 1=允许定时器正常工作; 0=使主定时器不起作用(包括计数器)
-  TIOS  = 0xff;      
-  TIOS_IOS0 = 0;	       //指定通道0为输入捕捉方式
-  TIOS_IOS1 = 0;	       //指定通道1为输入捕捉方式
+  TIOS  = 0x04;         //指定通道0为输入捕捉方式
+                        //指定通道1为输入捕捉方式
   TCTL4_EDG0x = 0x02;	   // 设置通道0为捕捉上升沿方式
   TCTL4_EDG1x = 0x02;	   // 设置通道0为捕捉上升沿方式
   TCTL1 = 0x00;	           // 后四个通道设置为定时器与输出引脚断开

@@ -1,20 +1,22 @@
 #ifndef _PROTOCOL_
 #define _PROTOCOL_
 
-#define ID_6A4      0x6a4
-#define ID_454      0x454
-#define ID_681      0x681
-#define ID_682      0x682
-#define ID_683      0x683
-#define ID_671      0x671
-#define ID_672      0x672
-#define ID_673      0x673
-#define ID_561      0x561
-#define ID_562      0x562
-#define ID_563      0x563
-#define ID_451      0x451
-#define ID_452      0x452
-#define ID_453      0x453
+
+
+#define ID_70x_BASE	0x700
+#define ID_71x_BASE	0x710
+#define ID_72x_BASE	0x720
+#define ID_73x_BASE	0x730
+#define ID_74x_BASE	0x740
+#define ID_75x_BASE	0x750
+#define ID_76x_BASE	0x760
+#define ID_77x_BASE	0x770
+#define ID_78x_BASE	0x780
+#define ID_79x_BASE	0x790
+#define ID_7Ax_BASE	0x7A0
+#define ID_7Bx_BASE	0x7B0
+
+
 
 typedef union {
       uint8_t Byte;
@@ -32,55 +34,47 @@ typedef union {
 
 typedef struct 
 {
-   multdata front1;
-   multdata front2;
-   multdata top1;
-   multdata top2;
-   multdata block1;
-   multdata block2;
-}ID_6A4_TYPE;
-
-
-typedef struct 
-{
-   uint8_t Totalmil[4];
-   uint8_t PulseNum[2];
-}ID_454_TYPE;
-
-
-typedef struct 
-{
-   multdata input1;
+   multdata input1;   
    multdata input2;
    multdata input3;
-   uint8_t  frq[2];
-   uint8_t  carspeed[2];
-   uint8_t  adderr;
-}ID_68_TYPE;
-
-
+   uint8_t per1[2];
+   uint8_t per2[2];
+   uint8_t addr_err;
+}ID_70_TYPE;
 typedef struct 
 {
-   uint8_t num; 
    uint8_t AD[8];   
-}ID_67_TYPE;
+}ID_71_TYPE;
 
 typedef struct 
 {
-   uint8_t out[8];    
-}ID_56_TYPE;
-
+   multdata out[6];    
+   uint8_t per[2];
+}ID_72_TYPE;
 typedef struct 
 {
+   uint8_t AD[8];   
+}ID_73_TYPE;
 
-   uint8_t Totalmil[4]; 
-   uint8_t Singlemil[2];
-   uint8_t PulseNum[2];
-      
-}ID_45_TYPE;
+extern ID_70_TYPE   ID_70x_data;
 
-extern ID_6A4_TYPE  ID_6A4_data;
-extern ID_68_TYPE  ID_681_data;
+extern ID_72_TYPE ID_72x_data;
 void can_receive_protocol(uint32_t ID,uint8_t mode,uint8_t length,uint8_t *data);
-void ID_Select(void);
+void ID_Select(int addr);
+void can_process0(void) ;
+void can_process1(void) ;
+void can_process3(void) ;
+void can_process4(void) ;
+void can_process5(void) ;
+void can_process6(void) ;
+void can_process7(void) ;
+void can_process8(void) ;
+void can_process9(void) ;
+void can_processA(void) ;
+void can_processB(void) ;
+
+
+
+
+
 #endif

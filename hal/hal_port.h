@@ -50,8 +50,8 @@
 #define Ctrl_In2           PTJ_PTJ6 
 
 //电源控制
-#define POWER_CTRL_5V      PTS_PTS1
-#define POWER_CTRL_12V     PTS_PTS2
+#define POWER_CTRL_5V      PTS_PTS1		// 未使用
+#define POWER_CTRL_12V     PTS_PTS2     // 未使用
 
 //MC33978 信号定义
 //!<片选信号 低电平有效
@@ -65,7 +65,7 @@
 #define MC_INT1            PT01AD_PT1AD2
 #define MC_INT2            PT01AD_PT0AD2
 //!<TLE6250G休眠信号 高电平
-#define TLE6250G_WK        PORTD_PD4
+#define TLE6250G_WK        PORTD_PD4    // 未使用
 
 
 void Hal_Port_Init(void);

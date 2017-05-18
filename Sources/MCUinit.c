@@ -30,18 +30,17 @@
 */
 void MCU_init(void)
 {
-  DisableInterrupts;
+  
   System_init(); 
-  Hal_Port_Init();
-  ID_Select();          
-  //Hal_Pwm_Init();
+  Hal_Port_Init();     
+  Hal_Pwm_Init();
   Hal_Spi_Init();
   initialize_TIM() ;
   //hal_api_init(); 
   hal_adc_init(); 
   hal_can_init(&can_receive_protocol);          
   //hal_irq_init(); 
-  EnableInterrupts;
+  
 }
 
 

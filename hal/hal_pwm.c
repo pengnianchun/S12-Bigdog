@@ -27,7 +27,7 @@ void Hal_Pwm_Init(void)
   /* PWMSCLA: BIT7=0,BIT6=0,BIT5=0,BIT4=0,BIT3=0,BIT2=0,BIT1=0,BIT0=0 */
   PWMSCLA = 0x00U;           //clk sa = clk a/2/256                           
   /* PWMSCLB: BIT7=0,BIT6=0,BIT5=0,BIT4=0,BIT3=0,BIT2=0,BIT1=0,BIT0=0 */
-  PWMSCLB = 12U;          //clk sb = clk b/2/12                             
+  PWMSCLB = 240;          //clk sb = clk b/2/12                             
   /* PWMPRCLK: PCKB2=0,PCKB1=0,PCKB0=0,PCKA2=0,PCKA1=0,PCKA0=0 */
   PWMPRCLK = 0;  	//                                    
   /* PWME: PWME7=1,PWME6=0,PWME5=0,PWME4=0,PWME3=0,PWME2=0,PWME1=0,PWME0=0 */

@@ -30,9 +30,8 @@ uint16_t hal_read_adc(void)
     uint16_t ad;
 	if(s_channel>12)
       return 0;
-	//while(!ATDSTAT0_SCF);
 	ad = ATDDR0L;
 	ATDCTL5=s_channel;
-	return ad;
+	return ad;           
 }
  

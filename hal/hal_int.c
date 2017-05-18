@@ -70,6 +70,7 @@ __interrupt void isr_default(void)
 
 __interrupt void isrVapi(void)
 {
+	CPMUAPICTL_APIF=1;
 }
 /* end of isrVapi */
 
@@ -92,10 +93,7 @@ __interrupt void isrVcanrx(void)
 */
 __interrupt void isrVportj(void)
 {
-
- 
   /* Write your interrupt code here ... */
-  pulse_count(); 
   PIFJ_PIFJ5=1;
 }
 /*
@@ -157,6 +155,7 @@ __interrupt void ivVtimch1(void)
 **     Returns     : Nothing
 ** ===================================================================
 */
+static vu8 s_pulse_cont;
 __interrupt void ivVtimch2(void)
 {
 	static u16 cont = 0;;
@@ -164,8 +163,13 @@ __interrupt void ivVtimch2(void)
 	
 	if(cont>10000){
 	  cont = 0;
-	  pulse[0] = pulse_temp[0];
-	  pulse[1] = pulse_temp[1];
+	  s_pulse_cont ++;
+	  if(s_pulse_cont>=PUSLE_SEVE_DATA_SIZE)
+	  {
+	  	s_pulse_cont = 0;
+	  }
+	  pulse[0][s_pulse_cont] = pulse_temp[0];
+	  pulse[1][s_pulse_cont] = pulse_temp[1];
 	  pulse_temp[0] = pulse_temp[1] = 0;
 	}
   

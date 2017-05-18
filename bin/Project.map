@@ -21,7 +21,7 @@ hal_system.c.o                          Model: BANKED,        Lang: ANSI-C
 hal_port.c.o                            Model: BANKED,        Lang: ANSI-C
 hal_spi.c.o                             Model: BANKED,        Lang: ANSI-C
 hal_int.c.o                             Model: BANKED,        Lang: ANSI-C
-time_base.c.o                           Model: BANKED,        Lang: ANSI-C
+hal_pwm.c.o                             Model: BANKED,        Lang: ANSI-C
 hal_can.c.o                             Model: BANKED,        Lang: ANSI-C
 protocol.c.o                            Model: BANKED,        Lang: ANSI-C
 hal_adc.c.o                             Model: BANKED,        Lang: ANSI-C
@@ -29,6 +29,8 @@ MCUinit.c.o                             Model: BANKED,        Lang: ANSI-C
 MC33978.C.o                             Model: BANKED,        Lang: ANSI-C
 global.c.o                              Model: BANKED,        Lang: ANSI-C
 Hal_ECT.c.o                             Model: BANKED,        Lang: ANSI-C
+CtrlOut.c.o                             Model: BANKED,        Lang: ANSI-C
+CtrlIn.c.o                              Model: BANKED,        Lang: ANSI-C
 
 *********************************************************************************************
 STARTUP SECTION
@@ -37,8 +39,8 @@ Entry point: 0xC000 (_Startup)
 _startupData is allocated at 0xC00F and uses 6 Bytes
 extern struct _tagStartup {
   unsigned nofZeroOut     1
-  _Range   pZeroOut       0x2100     280
-  _Copy    *toCopyDownBeg 0xC203
+  _Range   pZeroOut       0x2100     351
+  _Copy    *toCopyDownBeg 0xC211
 } _startupData;
 
 *********************************************************************************************
@@ -47,10 +49,10 @@ Section Name                    Size  Type     From       To       Segment
 ---------------------------------------------------------------------------------------------
 .init                             15     R     0xC000     0xC00E   ROM_C000
 .startData                        10     R     0xC00F     0xC018   ROM_C000
-.rodata                           42     R     0xC019     0xC042   ROM_C000
-NON_BANKED                       448     R     0xC043     0xC202   ROM_C000
-.copy                              2     R     0xC203     0xC204   ROM_C000
-.text                           2394     R    0x88000    0x88959   PAGE_08
+.rodata                           44     R     0xC019     0xC044   ROM_C000
+NON_BANKED                       460     R     0xC045     0xC210   ROM_C000
+.copy                              2     R     0xC211     0xC212   ROM_C000
+.text                           3758     R    0x88000    0x88EAD   PAGE_08
 .stack                           256   R/W     0x2000     0x20FF   RAM
 .abs_section_8                     1   N/I        0x8        0x8   .absSeg0
 .abs_section_9                     1   N/I        0x9        0x9   .absSeg1
@@ -316,12 +318,12 @@ NON_BANKED                       448     R     0xC043     0xC202   ROM_C000
 .abs_section_2f4                   2   N/I      0x2F4      0x2F5   .absSeg261
 .abs_section_2f8                   2   N/I      0x2F8      0x2F9   .absSeg262
 .abs_section_ff80                128     R     0xFF80     0xFFFF   .absSeg263
-.bss                              25   R/W     0x2100     0x2118   RAM
-.common                          255   R/W     0x2119     0x2217   RAM
+.bss                              20   R/W     0x2100     0x2113   RAM
+.common                          331   R/W     0x2114     0x225E   RAM
 
 Summary of section sizes per section type:
-READ_ONLY (R):         BDF (dec:     3039)
-READ_WRITE (R/W):      218 (dec:      536)
+READ_ONLY (R):        1141 (dec:     4417)
+READ_WRITE (R/W):      25F (dec:      607)
 NO_INIT (N/I):         148 (dec:      328)
 
 *********************************************************************************************
@@ -369,7 +371,7 @@ MODULE:                 -- mc9s12g128.c.o --
      _CPMURTI                                    3B       1       1       0   .abs_section_3b
      _CPMUCOP                                    3C       1       1       0   .abs_section_3c
      _CPMUARMCOP                                 3F       1       1       0   .abs_section_3f
-     _TIOS                                       40       1       1       3   .abs_section_40
+     _TIOS                                       40       1       1       1   .abs_section_40
      _CFORC                                      41       1       1       0   .abs_section_41
      _OC7M                                       42       1       1       0   .abs_section_42
      _OC7D                                       43       1       1       0   .abs_section_43
@@ -388,15 +390,15 @@ MODULE:                 -- mc9s12g128.c.o --
      _OCPD                                       6C       1       1       0   .abs_section_6c
      _PTPSR                                      6E       1       1       0   .abs_section_6e
      _ATDSTAT0                                   76       1       1       0   .abs_section_76
-     _PWME                                       A0       1       1       0   .abs_section_a0
-     _PWMPOL                                     A1       1       1       0   .abs_section_a1
-     _PWMCLK                                     A2       1       1       0   .abs_section_a2
-     _PWMPRCLK                                   A3       1       1       0   .abs_section_a3
-     _PWMCAE                                     A4       1       1       0   .abs_section_a4
-     _PWMCTL                                     A5       1       1       0   .abs_section_a5
+     _PWME                                       A0       1       1       2   .abs_section_a0
+     _PWMPOL                                     A1       1       1       1   .abs_section_a1
+     _PWMCLK                                     A2       1       1       1   .abs_section_a2
+     _PWMPRCLK                                   A3       1       1       1   .abs_section_a3
+     _PWMCAE                                     A4       1       1       1   .abs_section_a4
+     _PWMCTL                                     A5       1       1       1   .abs_section_a5
      _PWMCLKAB                                   A6       1       1       0   .abs_section_a6
-     _PWMSCLA                                    A8       1       1       0   .abs_section_a8
-     _PWMSCLB                                    A9       1       1       0   .abs_section_a9
+     _PWMSCLA                                    A8       1       1       1   .abs_section_a8
+     _PWMSCLB                                    A9       1       1       1   .abs_section_a9
      _SCI0ACR2                                   CA       1       1       0   .abs_section_ca
      _SCI0CR2                                    CB       1       1       0   .abs_section_cb
      _SCI0SR1                                    CC       1       1       0   .abs_section_cc
@@ -438,13 +440,13 @@ MODULE:                 -- mc9s12g128.c.o --
      _DFPROT                                    109       1       1       0   .abs_section_109
      _FOPT                                      110       1       1       0   .abs_section_110
      _IVBR                                      120       1       1       1   .abs_section_120
-     _CANCTL0                                   140       1       1       3   .abs_section_140
+     _CANCTL0                                   140       1       1       4   .abs_section_140
      _CANCTL1                                   141       1       1       3   .abs_section_141
      _CANBTR0                                   142       1       1       1   .abs_section_142
      _CANBTR1                                   143       1       1       1   .abs_section_143
      _CANRFLG                                   144       1       1       2   .abs_section_144
      _CANRIER                                   145       1       1       1   .abs_section_145
-     _CANTFLG                                   146       1       1       3   .abs_section_146
+     _CANTFLG                                   146       1       1       2   .abs_section_146
      _CANTIER                                   147       1       1       0   .abs_section_147
      _CANTARQ                                   148       1       1       0   .abs_section_148
      _CANTAAK                                   149       1       1       0   .abs_section_149
@@ -482,10 +484,10 @@ MODULE:                 -- mc9s12g128.c.o --
      _CANRXDSR6                                 16A       1       1       0   .abs_section_16a
      _CANRXDSR7                                 16B       1       1       0   .abs_section_16b
      _CANRXDLR                                  16C       1       1       1   .abs_section_16c
-     _CANTXIDR0                                 170       1       1       1   .abs_section_170
-     _CANTXIDR1                                 171       1       1       6   .abs_section_171
+     _CANTXIDR0                                 170       1       1       2   .abs_section_170
+     _CANTXIDR1                                 171       1       1       2   .abs_section_171
      _CANTXIDR2                                 172       1       1       1   .abs_section_172
-     _CANTXIDR3                                 173       1       1       4   .abs_section_173
+     _CANTXIDR3                                 173       1       1       1   .abs_section_173
      _CANTXDSR0                                 174       1       1       1   .abs_section_174
      _CANTXDSR1                                 175       1       1       0   .abs_section_175
      _CANTXDSR2                                 176       1       1       0   .abs_section_176
@@ -496,33 +498,33 @@ MODULE:                 -- mc9s12g128.c.o --
      _CANTXDSR7                                 17B       1       1       0   .abs_section_17b
      _CANTXDLR                                  17C       1       1       1   .abs_section_17c
      _CANTXTBPR                                 17D       1       1       1   .abs_section_17d
-     _PTT                                       240       1       1       1   .abs_section_240
+     _PTT                                       240       1       1      11   .abs_section_240
      _PTIT                                      241       1       1       0   .abs_section_241
      _DDRT                                      242       1       1       3   .abs_section_242
      _PERT                                      244       1       1       1   .abs_section_244
      _PPST                                      245       1       1       1   .abs_section_245
-     _PTS                                       248       1       1       1   .abs_section_248
+     _PTS                                       248       1       1       3   .abs_section_248
      _PTIS                                      249       1       1       0   .abs_section_249
      _DDRS                                      24A       1       1       1   .abs_section_24a
      _PERS                                      24C       1       1       1   .abs_section_24c
      _PPSS                                      24D       1       1       1   .abs_section_24d
      _WOMS                                      24E       1       1       1   .abs_section_24e
      _PRR0                                      24F       1       1       0   .abs_section_24f
-     _PTM                                       250       1       1       0   .abs_section_250
+     _PTM                                       250       1       1       4   .abs_section_250
      _PTIM                                      251       1       1       0   .abs_section_251
-     _DDRM                                      252       1       1       0   .abs_section_252
+     _DDRM                                      252       1       1       1   .abs_section_252
      _PERM                                      254       1       1       0   .abs_section_254
      _PPSM                                      255       1       1       0   .abs_section_255
      _WOMM                                      256       1       1       0   .abs_section_256
      _PKGCR                                     257       1       1       1   .abs_section_257
-     _PTP                                       258       1       1       1   .abs_section_258
+     _PTP                                       258       1       1       7   .abs_section_258
      _PTIP                                      259       1       1       0   .abs_section_259
      _DDRP                                      25A       1       1       1   .abs_section_25a
      _PERP                                      25C       1       1       1   .abs_section_25c
      _PPSP                                      25D       1       1       1   .abs_section_25d
      _PIEP                                      25E       1       1       1   .abs_section_25e
      _PIFP                                      25F       1       1       1   .abs_section_25f
-     _PTJ                                       268       1       1       5   .abs_section_268
+     _PTJ                                       268       1       1      11   .abs_section_268
      _PTIJ                                      269       1       1       0   .abs_section_269
      _DDRJ                                      26A       1       1       4   .abs_section_26a
      _PERJ                                      26C       1       1       0   .abs_section_26c
@@ -530,13 +532,13 @@ MODULE:                 -- mc9s12g128.c.o --
      _PIEJ                                      26E       1       1       0   .abs_section_26e
      _PIFJ                                      26F       1       1       1   .abs_section_26f
      _CPMULVCTL                                 2F1       1       1       0   .abs_section_2f1
-     _CPMUAPICTL                                2F2       1       1       0   .abs_section_2f2
+     _CPMUAPICTL                                2F2       1       1       1   .abs_section_2f2
      _CPMUACLKTR                                2F3       1       1       0   .abs_section_2f3
      _CPMUOSC                                   2FA       1       1       1   .abs_section_2fa
      _CPMUPROT                                  2FB       1       1       2   .abs_section_2fb
-     _PORTAB                                      0       2       2       7   .abs_section_0
-     _DDRAB                                       2       2       2       2   .abs_section_2
-     _PORTCD                                      4       2       2       2   .abs_section_4
+     _PORTAB                                      0       2       2      25   .abs_section_0
+     _DDRAB                                       2       2       2       4   .abs_section_2
+     _PORTCD                                      4       2       2      30   .abs_section_4
      _DDRCD                                       6       2       2       2   .abs_section_6
      _PARTID                                     1A       2       2       0   .abs_section_1a
      _DBGTB                                      24       2       2       0   .abs_section_24
@@ -576,11 +578,11 @@ MODULE:                 -- mc9s12g128.c.o --
      _PWMPER01                                   B4       2       2       0   .abs_section_b4
      _PWMPER23                                   B6       2       2       0   .abs_section_b6
      _PWMPER45                                   B8       2       2       0   .abs_section_b8
-     _PWMPER67                                   BA       2       2       0   .abs_section_ba
+     _PWMPER67                                   BA       2       2       2   .abs_section_ba
      _PWMDTY01                                   BC       2       2       0   .abs_section_bc
      _PWMDTY23                                   BE       2       2       0   .abs_section_be
      _PWMDTY45                                   C0       2       2       0   .abs_section_c0
-     _PWMDTY67                                   C2       2       2       0   .abs_section_c2
+     _PWMDTY67                                   C2       2       2       2   .abs_section_c2
      _SCI0BD                                     C8       2       2       0   .abs_section_c8
      _SCI1BD                                     D0       2       2       0   .abs_section_d0
      _SPI0DR                                     DC       2       2       0   .abs_section_dc
@@ -601,16 +603,15 @@ MODULE:                 -- mc9s12g128.c.o --
      _CPMUIRCTRIM                               2F8       2       2       0   .abs_section_2f8
 MODULE:                 -- main.c.o --
 - PROCEDURES:
-     polling                                  88000      A7     167       2   .text       
-     main                                     880A7      3B      59       2   .text       
+     polling                                  88000      D5     213       2   .text       
+     main                                     880D5      66     102       2   .text       
 - VARIABLES:
      ms_1.1                                    2100       2       2       4   .bss        
      ms_10.2                                   2102       2       2       4   .bss        
      ms_100.3                                  2104       2       2       4   .bss        
-     ms_1000.4                                 2106       2       2       3   .bss        
 MODULE:                 -- Start12.c.o --
 - PROCEDURES:
-     Init                                     880E2      29      41       2   .text       
+     Init                                     8813B      29      41       2   .text       
      _Startup                                  C000       F      15       1   .init       
 - VARIABLES:
      _startupData                              C00F       6       6       3   .startData  
@@ -618,172 +619,213 @@ MODULE:                 -- Start12.c.o --
      __SEG_END_SSTACK                          2100       0       0       1               
 MODULE:                 -- STRING.C.o (ansibi.lib) --
 - PROCEDURES:
-     memset                                   8810B      18      24       6   .text       
+     memcpy                                   88164      24      36       4   .text       
+     memset                                   88188      18      24       6   .text       
 - VARIABLES:
 MODULE:                 -- rtshc12.c.o (ansibi.lib) --
 - PROCEDURES:
-     _LSHL                                     C043      11      17       4   NON_BANKED  
-     _LSHRU                                    C054      11      17       2   NON_BANKED  
-     _LCMP                                     C065      19      25       2   NON_BANKED  
-     _lDivMod                                  C07E      BE     190       1   NON_BANKED  
-     _LDIVU                                    C13C       E      14       1   NON_BANKED  
-     _CASE_CHECKED_BYTE                        C14A      14      20       4   NON_BANKED  
+     _LSHL                                     C045      11      17       4   NON_BANKED  
+     _LSHRU                                    C056      11      17       1   NON_BANKED  
+     _lDivMod                                  C067      BE     190       1   NON_BANKED  
+     _LDIVU                                    C125       E      14       1   NON_BANKED  
+     _ILSEXT                                   C133       7       7      12   NON_BANKED  
+     _CASE_CHECKED_BYTE                        C13A      14      20       4   NON_BANKED  
 - VARIABLES:
 MODULE:                 -- hal_system.c.o --
 - PROCEDURES:
-     System_init                              88123      36      54       2   .text       
-     delay_1us                                88159       8       8       2   .text       
-     delay_nus                                88161      13      19       4   .text       
+     System_init                              881A0      36      54       2   .text       
+     delay_1us                                881D6       8       8       2   .text       
+     delay_nus                                881DE      13      19       4   .text       
+     delay_1ms                                881F1      11      17       2   .text       
 - VARIABLES:
 MODULE:                 -- hal_port.c.o --
 - PROCEDURES:
-     Hal_Port_Init                            88174      44      68       2   .text       
+     Hal_Port_Init                            88202      4F      79       2   .text       
 - VARIABLES:
 MODULE:                 -- hal_spi.c.o --
 - PROCEDURES:
-     Hal_Spi_Init                             881B8      24      36       2   .text       
-     SPI_Byte                                 881DC      12      18       8   .text       
+     Hal_Spi_Init                             88251      24      36       2   .text       
+     SPI_Byte                                 88275      12      18       8   .text       
 - VARIABLES:
 MODULE:                 -- hal_int.c.o --
 - PROCEDURES:
-     MCU_init_reset                            C15E      17      23       3   NON_BANKED  
-     isr_default                               C175       1       1      55   NON_BANKED  
-     isrVapi                                   C176       1       1       1   NON_BANKED  
-     isrVcanrx                                 C177       A      10       1   NON_BANKED  
-     isrVportj                                 C181       9       9       1   NON_BANKED  
-     ivVtimch0                                 C18A      1C      28       1   NON_BANKED  
-     ivVtimch1                                 C1A6      1C      28       1   NON_BANKED  
-     ivVtimch2                                 C1C2      41      65       1   NON_BANKED  
+     MCU_init_reset                            C14E      17      23       3   NON_BANKED  
+     isr_default                               C165       1       1      55   NON_BANKED  
+     isrVapi                                   C166       5       5       1   NON_BANKED  
+     isrVcanrx                                 C16B       A      10       1   NON_BANKED  
+     isrVportj                                 C175       5       5       1   NON_BANKED  
+     ivVtimch0                                 C17A      1C      28       1   NON_BANKED  
+     ivVtimch1                                 C196      1C      28       1   NON_BANKED  
+     ivVtimch2                                 C1B2      5F      95       1   NON_BANKED  
 - VARIABLES:
-     cont.3                                    2108       2       2       3   .bss        
-     cont0.1                                   210A       2       2       2   .bss        
-     cont1.2                                   210C       2       2       2   .bss        
+     cont.3                                    2106       2       2       3   .bss        
+     cont0.1                                   2108       2       2       2   .bss        
+     cont1.2                                   210A       2       2       2   .bss        
+     s_pulse_cont                              210C       1       1       5   .bss        
      _InterruptVectorTable                     FF80      80     128       0   .abs_section_ff80
-     pulse_temp                                2119       4       4       9   .common     
-MODULE:                 -- time_base.c.o --
+     pulse_temp                                2114       4       4       9   .common     
+MODULE:                 -- hal_pwm.c.o --
 - PROCEDURES:
-     pulse_count                              881EE       8       8       2   .text       
+     Hal_Pwm_Init                             88287      25      37       2   .text       
+     Change_Pwm                               882AC       9       9       2   .text       
 - VARIABLES:
-     g_pulse_count                             210E       2       2       2   .bss        
 MODULE:                 -- hal_can.c.o --
 - PROCEDURES:
-     hal_can_init                             881F6      70     112       2   .text       
-     hal_Can_SendData                         88266      A1     161       3   .text       
-     hal_can_receive                          88307      D7     215       2   .text       
+     hal_can_init                             882B5      81     129       2   .text       
+     hal_Can_SendData                         88336      AD     173      23   .text       
+     hal_can_receive                          883E3      D7     215       2   .text       
 - VARIABLES:
-     can_process                               211D       3       3       3   .common     
+     can_process                               2118       3       3       3   .common     
 MODULE:                 -- protocol.c.o --
 - PROCEDURES:
-     ID_Select                                883DE      41      65       2   .text       
-     can_receive_protocol                     8841F      62      98       3   .text       
-     can_50ms_process0                        88481      19      25       2   .text       
+     ID_Select                                884BA      A9     169       2   .text       
+     can_receive_protocol                     88563      21      33       3   .text       
+     can_process0                             88584      19      25       2   .text       
+     can_process1                             8859D      29      41       2   .text       
+     Current_AUIR3315                         885C6      2C      44       2   .text       
+     Current_BTS6143                          885F2      2C      44       8   .text       
+     Current_BTS740                           8861E      2C      44       8   .text       
+     can_process3                             8864A      29      41       2   .text       
+     can_process4                             88673      29      41       2   .text       
+     can_process5                             8869C      29      41       2   .text       
+     can_process6                             886C5      29      41       2   .text       
+     can_process7                             886EE      29      41       2   .text       
+     can_process8                             88717      29      41       2   .text       
+     can_process9                             88740      29      41       2   .text       
+     can_processA                             88769      29      41       2   .text       
+     can_processB                             88792      29      41       2   .text       
 - VARIABLES:
-     ID_6A4_data                               2120       6       6       6   .common     
-     ID_454_data                               2126       6       6       6   .common     
-     ID_681_data                               212C       8       8      33   .common     
-     ID_671_data                               2134       9       9       1   .common     
-     ID_561_data                               213D       8       8       1   .common     
-     ID_451_data                               2145       8       8       1   .common     
-     ID_68x_data                               214D       2       2       2   .common     
-     ID_67x_data                               214F       2       2       1   .common     
-     ID_56x_data                               2151       2       2       1   .common     
-     ID_45x_data                               2153       2       2       1   .common     
-     ID_67x                                    2155       4       4       2   .common     
-     ID_68x                                    2159       4       4       4   .common     
-     ID_56x                                    215D       4       4       2   .common     
-     ID_45x                                    2161       4       4       2   .common     
+     ID_70x_data                               211B       8       8      41   .common     
+     ID_71x_data                               2123       8       8       2   .common     
+     ID_72x_data                               212B       8       8      39   .common     
+     ID_73x_data                               2133       8       8       2   .common     
+     ID_74x_data                               213B       8       8       2   .common     
+     ID_75x_data                               2143       8       8       2   .common     
+     ID_76x_data                               214B       8       8       2   .common     
+     ID_77x_data                               2153       8       8       2   .common     
+     ID_78x_data                               215B       8       8       2   .common     
+     ID_79x_data                               2163       8       8       2   .common     
+     ID_7Ax_data                               216B       8       8       2   .common     
+     ID_7Bx_data                               2173       8       8       2   .common     
+     ID_70x                                    217B       4       4       4   .common     
+     ID_71x                                    217F       4       4       4   .common     
+     ID_72x                                    2183       4       4       4   .common     
+     ID_73x                                    2187       4       4       4   .common     
+     ID_74x                                    218B       4       4       4   .common     
+     ID_75x                                    218F       4       4       4   .common     
+     ID_76x                                    2193       4       4       4   .common     
+     ID_77x                                    2197       4       4       4   .common     
+     ID_78x                                    219B       4       4       4   .common     
+     ID_79x                                    219F       4       4       4   .common     
+     ID_7Ax                                    21A3       4       4       4   .common     
+     ID_7Bx                                    21A7       4       4       4   .common     
 MODULE:                 -- hal_adc.c.o --
 - PROCEDURES:
-     hal_adc_init                             8849A      1D      29       2   .text       
-     set_adc_ch                               884B7       4       4       2   .text       
-     get_adc_ch                               884BB       4       4       2   .text       
-     hal_read_adc                             884BF      15      21       6   .text       
+     hal_adc_init                             887BB      1D      29       2   .text       
+     set_adc_ch                               887D8       4       4       4   .text       
+     get_adc_ch                               887DC       4       4       2   .text       
+     hal_read_adc                             887E0      15      21       8   .text       
 - VARIABLES:
-     s_channel                                 2110       1       1       4   .bss        
+     s_channel                                 210D       1       1       4   .bss        
 MODULE:                 -- MCUinit.c.o --
 - PROCEDURES:
-     MCU_init                                 884D4      26      38       2   .text       
+     MCU_init                                 887F5      22      34       2   .text       
 - VARIABLES:
 MODULE:                 -- MC33978.C.o --
 - PROCEDURES:
-     ChipSelect                               884FA      30      48       2   .text       
-     ChipCancel                               8852A       B      11       2   .text       
-     mc33978_write                            88535      2F      47      22   .text       
-     CheckSpi                                 88564      30      48       4   .text       
-     mc33978_Input_Init                       88594      77     119       2   .text       
-     mc33978_Adc_Init                         8860B      95     149       2   .text       
-     mc33978_AMUX                             886A0      13      19       2   .text       
-     mc33978_ReadSwtichStatus                 886B3     127     295       2   .text       
-     GetAdcData                               887DA     105     261       5   .text       
+     ChipSelect                               88817      30      48       2   .text       
+     ChipCancel                               88847       B      11       2   .text       
+     mc33978_write                            88852      2F      47      22   .text       
+     CheckSpi                                 88881      30      48       4   .text       
+     mc33978_Input_Init                       888B1      77     119       2   .text       
+     mc33978_Adc_Init                         88928      95     149       2   .text       
+     mc33978_AMUX                             889BD      13      19       2   .text       
 - VARIABLES:
-     ADMUX0_CH                                 C019      14      20       1   .rodata     
-     ADMUX1_CH                                 C02D      16      22       1   .rodata     
-     admux0_cont                               2111       2       2       7   .bss        
-     admux1_cont                               2113       2       2       7   .bss        
-     mc33978_rtn                               2115       4       4      12   .bss        
-     s_input                                   2165       3       3      19   .common     
+     mc33978_rtn                               21AB       4       4      12   .common     
 MODULE:                 -- global.c.o --
 - PROCEDURES:
-     GlobalParaInit                           888DF      36      54       2   .text       
+     GlobalParaInit                           889D0      36      54       2   .text       
 - VARIABLES:
-     TimeOutConfig                             2168       1       1       4   .common     
-     RunTime                                   2169       2       2       7   .common     
-     capture                                   216B       4       4       3   .common     
-     pulse                                     216F       4       4       2   .common     
-     CtrlOutBuffer                             2173       6       6       1   .common     
-     fir_err                                   2179       3       3       4   .common     
-     MC_SELECT                                 217C       2       2       7   .common     
-     adc_cont                                  217E       2       2      12   .common     
-     u16_adc_buff                              2180      40      64       2   .common     
-     u16_admux0_data                           21C0      2C      44       1   .common     
-     u16_admux1_data                           21EC      2C      44       1   .common     
+     TimeOutConfig                             21AF       1       1       4   .common     
+     RunTime                                   21B0       2       2       7   .common     
+     capture                                   21B2       4       4       3   .common     
+     pulse                                     21B6      28      40       4   .common     
+     CtrlOutBuffer                             21DE       6       6       1   .common     
+     fir_err                                   21E4       6       6       4   .common     
+     MC_SELECT                                 21EA       2       2       6   .common     
+     adc_cont                                  21EC       2       2       8   .common     
+     u16_adc_buff                              21EE      40      64       2   .common     
+     u16_admux_data                            222E      2C      44      11   .common     
+     Select_addr                               225A       2       2       1   .common     
 MODULE:                 -- Hal_ECT.c.o --
 - PROCEDURES:
-     initialize_TIM                           88915      45      69       2   .text       
+     initialize_TIM                           88A06      40      64       2   .text       
 - VARIABLES:
+MODULE:                 -- CtrlOut.c.o --
+- PROCEDURES:
+     RenovatingOutput                         88A46     223     547       2   .text       
+- VARIABLES:
+     per_old                                   210E       2       2       2   .bss        
+MODULE:                 -- CtrlIn.c.o --
+- PROCEDURES:
+     GetInput                                 88C69     127     295       2   .text       
+     GetPer                                   88D90      46      70       2   .text       
+     GetAdcsingleData                         88DD6      81     129       2   .text       
+     GetAdcData                               88E57      57      87       2   .text       
+- VARIABLES:
+     ADMUX0_CH                                 C019      16      22       1   .rodata     
+     ADMUX1_CH                                 C02F      16      22       1   .rodata     
+     admux0_cont                               2110       2       2       3   .bss        
+     admux1_cont                               2112       2       2       3   .bss        
+     s_input                                   225C       3       3      19   .common     
 
 *********************************************************************************************
 MODULE STATISTIC
   Name                                      Data   Code  Const
 ---------------------------------------------------------------------------------------------
   mc9s12g128.c.o                             328      0      0
-  main.c.o                                     8    226      0
+  main.c.o                                     6    315      0
   Start12.c.o                                  0     56      0
-  STRING.C.o (ansibi.lib)                      0     24      0
-  rtshc12.c.o (ansibi.lib)                     0    283      0
-  hal_system.c.o                               0     81      0
-  hal_port.c.o                                 0     68      0
+  STRING.C.o (ansibi.lib)                      0     60      0
+  rtshc12.c.o (ansibi.lib)                     0    265      0
+  hal_system.c.o                               0     98      0
+  hal_port.c.o                                 0     79      0
   hal_spi.c.o                                  0     54      0
-  hal_int.c.o                                 10    165    128
-  time_base.c.o                                2      8      0
-  hal_can.c.o                                  3    488      0
-  protocol.c.o                                69    188      0
+  hal_int.c.o                                 11    195    128
+  hal_pwm.c.o                                  0     46      0
+  hal_can.c.o                                  3    517      0
+  protocol.c.o                               144    769      0
   hal_adc.c.o                                  1     58      0
-  MCUinit.c.o                                  0     38      0
-  MC33978.C.o                                 11    997     42
-  global.c.o                                 176     54      0
-  Hal_ECT.c.o                                  0     69      0
+  MCUinit.c.o                                  0     34      0
+  MC33978.C.o                                  4    441      0
+  global.c.o                                 173     54      0
+  Hal_ECT.c.o                                  0     64      0
+  CtrlOut.c.o                                  2    547      0
+  CtrlIn.c.o                                   7    581     44
   other                                      256     10      2
 
 *********************************************************************************************
 SECTION USE IN OBJECT-ALLOCATION SECTION
 ---------------------------------------------------------------------------------------------
 SECTION: ".text"
-  polling main Init memset System_init delay_1us delay_nus Hal_Port_Init 
-  Hal_Spi_Init SPI_Byte pulse_count hal_can_init hal_Can_SendData 
-  hal_can_receive ID_Select can_receive_protocol can_50ms_process0 hal_adc_init 
-  set_adc_ch get_adc_ch hal_read_adc MCU_init ChipSelect ChipCancel 
-  mc33978_write CheckSpi mc33978_Input_Init mc33978_Adc_Init mc33978_AMUX 
-  mc33978_ReadSwtichStatus GetAdcData GlobalParaInit initialize_TIM 
+  polling main Init memcpy memset System_init delay_1us delay_nus delay_1ms 
+  Hal_Port_Init Hal_Spi_Init SPI_Byte Hal_Pwm_Init Change_Pwm hal_can_init 
+  hal_Can_SendData hal_can_receive ID_Select can_receive_protocol can_process0 
+  can_process1 Current_AUIR3315 Current_BTS6143 Current_BTS740 can_process3 
+  can_process4 can_process5 can_process6 can_process7 can_process8 can_process9 
+  can_processA can_processB hal_adc_init set_adc_ch get_adc_ch hal_read_adc 
+  MCU_init ChipSelect ChipCancel mc33978_write CheckSpi mc33978_Input_Init 
+  mc33978_Adc_Init mc33978_AMUX GlobalParaInit initialize_TIM RenovatingOutput 
+  GetInput GetPer GetAdcsingleData GetAdcData 
 SECTION: ".bss"
-  ms_1.1 ms_10.2 ms_100.3 ms_1000.4 cont.3 cont0.1 cont1.2 g_pulse_count 
-  s_channel admux0_cont admux1_cont mc33978_rtn 
+  ms_1.1 ms_10.2 ms_100.3 cont.3 cont0.1 cont1.2 s_pulse_cont s_channel 
+  per_old admux0_cont admux1_cont 
 SECTION: ".init"
   _Startup 
 SECTION: ".rodata"
   ADMUX0_CH ADMUX1_CH 
 SECTION: "NON_BANKED"
-  _LSHL _LSHRU _LCMP _lDivMod _LDIVU _CASE_CHECKED_BYTE MCU_init_reset 
+  _LSHL _LSHRU _lDivMod _LDIVU _ILSEXT _CASE_CHECKED_BYTE MCU_init_reset 
   isr_default isrVapi isrVcanrx isrVportj ivVtimch0 ivVtimch1 ivVtimch2 
 SECTION: ".abs_section_8"
   _PORTE 
@@ -1312,11 +1354,12 @@ SECTION: ".abs_section_2f4"
 SECTION: ".abs_section_2f8"
   _CPMUIRCTRIM 
 SECTION: ".common"
-  pulse_temp can_process ID_6A4_data ID_454_data ID_681_data ID_671_data 
-  ID_561_data ID_451_data ID_68x_data ID_67x_data ID_56x_data ID_45x_data 
-  ID_67x ID_68x ID_56x ID_45x s_input TimeOutConfig RunTime capture pulse 
-  CtrlOutBuffer fir_err MC_SELECT adc_cont u16_adc_buff u16_admux0_data 
-  u16_admux1_data 
+  pulse_temp can_process ID_70x_data ID_71x_data ID_72x_data ID_73x_data 
+  ID_74x_data ID_75x_data ID_76x_data ID_77x_data ID_78x_data ID_79x_data 
+  ID_7Ax_data ID_7Bx_data ID_70x ID_71x ID_72x ID_73x ID_74x ID_75x ID_76x 
+  ID_77x ID_78x ID_79x ID_7Ax ID_7Bx mc33978_rtn TimeOutConfig RunTime capture 
+  pulse CtrlOutBuffer fir_err MC_SELECT adc_cont u16_adc_buff u16_admux_data 
+  Select_addr s_input 
 SECTION: ".abs_section_ff80"
   _InterruptVectorTable 
 
@@ -1324,9 +1367,9 @@ SECTION: ".abs_section_ff80"
 OBJECT LIST SORTED BY ADDRESS
      Name                                      Addr   hSize   dSize     Ref    Section   RLIB
 ---------------------------------------------------------------------------------------------
-     _PORTAB                                      0       2       2       7   .abs_section_0
-     _DDRAB                                       2       2       2       2   .abs_section_2
-     _PORTCD                                      4       2       2       2   .abs_section_4
+     _PORTAB                                      0       2       2      25   .abs_section_0
+     _DDRAB                                       2       2       2       4   .abs_section_2
+     _PORTCD                                      4       2       2      30   .abs_section_4
      _DDRCD                                       6       2       2       2   .abs_section_6
      _PORTE                                       8       1       1       0   .abs_section_8
      _DDRE                                        9       1       1       0   .abs_section_9
@@ -1363,7 +1406,7 @@ OBJECT LIST SORTED BY ADDRESS
      _CPMURTI                                    3B       1       1       0   .abs_section_3b
      _CPMUCOP                                    3C       1       1       0   .abs_section_3c
      _CPMUARMCOP                                 3F       1       1       0   .abs_section_3f
-     _TIOS                                       40       1       1       3   .abs_section_40
+     _TIOS                                       40       1       1       1   .abs_section_40
      _CFORC                                      41       1       1       0   .abs_section_41
      _OC7M                                       42       1       1       0   .abs_section_42
      _OC7D                                       43       1       1       0   .abs_section_43
@@ -1411,15 +1454,15 @@ OBJECT LIST SORTED BY ADDRESS
      _ATDDR9                                     92       2       2       0   .abs_section_92
      _ATDDR10                                    94       2       2       0   .abs_section_94
      _ATDDR11                                    96       2       2       0   .abs_section_96
-     _PWME                                       A0       1       1       0   .abs_section_a0
-     _PWMPOL                                     A1       1       1       0   .abs_section_a1
-     _PWMCLK                                     A2       1       1       0   .abs_section_a2
-     _PWMPRCLK                                   A3       1       1       0   .abs_section_a3
-     _PWMCAE                                     A4       1       1       0   .abs_section_a4
-     _PWMCTL                                     A5       1       1       0   .abs_section_a5
+     _PWME                                       A0       1       1       2   .abs_section_a0
+     _PWMPOL                                     A1       1       1       1   .abs_section_a1
+     _PWMCLK                                     A2       1       1       1   .abs_section_a2
+     _PWMPRCLK                                   A3       1       1       1   .abs_section_a3
+     _PWMCAE                                     A4       1       1       1   .abs_section_a4
+     _PWMCTL                                     A5       1       1       1   .abs_section_a5
      _PWMCLKAB                                   A6       1       1       0   .abs_section_a6
-     _PWMSCLA                                    A8       1       1       0   .abs_section_a8
-     _PWMSCLB                                    A9       1       1       0   .abs_section_a9
+     _PWMSCLA                                    A8       1       1       1   .abs_section_a8
+     _PWMSCLB                                    A9       1       1       1   .abs_section_a9
      _PWMCNT01                                   AC       2       2       0   .abs_section_ac
      _PWMCNT23                                   AE       2       2       0   .abs_section_ae
      _PWMCNT45                                   B0       2       2       0   .abs_section_b0
@@ -1427,11 +1470,11 @@ OBJECT LIST SORTED BY ADDRESS
      _PWMPER01                                   B4       2       2       0   .abs_section_b4
      _PWMPER23                                   B6       2       2       0   .abs_section_b6
      _PWMPER45                                   B8       2       2       0   .abs_section_b8
-     _PWMPER67                                   BA       2       2       0   .abs_section_ba
+     _PWMPER67                                   BA       2       2       2   .abs_section_ba
      _PWMDTY01                                   BC       2       2       0   .abs_section_bc
      _PWMDTY23                                   BE       2       2       0   .abs_section_be
      _PWMDTY45                                   C0       2       2       0   .abs_section_c0
-     _PWMDTY67                                   C2       2       2       0   .abs_section_c2
+     _PWMDTY67                                   C2       2       2       2   .abs_section_c2
      _SCI0BD                                     C8       2       2       0   .abs_section_c8
      _SCI0ACR2                                   CA       1       1       0   .abs_section_ca
      _SCI0CR2                                    CB       1       1       0   .abs_section_cb
@@ -1480,13 +1523,13 @@ OBJECT LIST SORTED BY ADDRESS
      _FCCOB                                     10A       2       2       0   .abs_section_10a
      _FOPT                                      110       1       1       0   .abs_section_110
      _IVBR                                      120       1       1       1   .abs_section_120
-     _CANCTL0                                   140       1       1       3   .abs_section_140
+     _CANCTL0                                   140       1       1       4   .abs_section_140
      _CANCTL1                                   141       1       1       3   .abs_section_141
      _CANBTR0                                   142       1       1       1   .abs_section_142
      _CANBTR1                                   143       1       1       1   .abs_section_143
      _CANRFLG                                   144       1       1       2   .abs_section_144
      _CANRIER                                   145       1       1       1   .abs_section_145
-     _CANTFLG                                   146       1       1       3   .abs_section_146
+     _CANTFLG                                   146       1       1       2   .abs_section_146
      _CANTIER                                   147       1       1       0   .abs_section_147
      _CANTARQ                                   148       1       1       0   .abs_section_148
      _CANTAAK                                   149       1       1       0   .abs_section_149
@@ -1525,10 +1568,10 @@ OBJECT LIST SORTED BY ADDRESS
      _CANRXDSR7                                 16B       1       1       0   .abs_section_16b
      _CANRXDLR                                  16C       1       1       1   .abs_section_16c
      _CANRXTSR                                  16E       2       2       0   .abs_section_16e
-     _CANTXIDR0                                 170       1       1       1   .abs_section_170
-     _CANTXIDR1                                 171       1       1       6   .abs_section_171
+     _CANTXIDR0                                 170       1       1       2   .abs_section_170
+     _CANTXIDR1                                 171       1       1       2   .abs_section_171
      _CANTXIDR2                                 172       1       1       1   .abs_section_172
-     _CANTXIDR3                                 173       1       1       4   .abs_section_173
+     _CANTXIDR3                                 173       1       1       1   .abs_section_173
      _CANTXDSR0                                 174       1       1       1   .abs_section_174
      _CANTXDSR1                                 175       1       1       0   .abs_section_175
      _CANTXDSR2                                 176       1       1       0   .abs_section_176
@@ -1540,33 +1583,33 @@ OBJECT LIST SORTED BY ADDRESS
      _CANTXDLR                                  17C       1       1       1   .abs_section_17c
      _CANTXTBPR                                 17D       1       1       1   .abs_section_17d
      _CANTXTSR                                  17E       2       2       0   .abs_section_17e
-     _PTT                                       240       1       1       1   .abs_section_240
+     _PTT                                       240       1       1      11   .abs_section_240
      _PTIT                                      241       1       1       0   .abs_section_241
      _DDRT                                      242       1       1       3   .abs_section_242
      _PERT                                      244       1       1       1   .abs_section_244
      _PPST                                      245       1       1       1   .abs_section_245
-     _PTS                                       248       1       1       1   .abs_section_248
+     _PTS                                       248       1       1       3   .abs_section_248
      _PTIS                                      249       1       1       0   .abs_section_249
      _DDRS                                      24A       1       1       1   .abs_section_24a
      _PERS                                      24C       1       1       1   .abs_section_24c
      _PPSS                                      24D       1       1       1   .abs_section_24d
      _WOMS                                      24E       1       1       1   .abs_section_24e
      _PRR0                                      24F       1       1       0   .abs_section_24f
-     _PTM                                       250       1       1       0   .abs_section_250
+     _PTM                                       250       1       1       4   .abs_section_250
      _PTIM                                      251       1       1       0   .abs_section_251
-     _DDRM                                      252       1       1       0   .abs_section_252
+     _DDRM                                      252       1       1       1   .abs_section_252
      _PERM                                      254       1       1       0   .abs_section_254
      _PPSM                                      255       1       1       0   .abs_section_255
      _WOMM                                      256       1       1       0   .abs_section_256
      _PKGCR                                     257       1       1       1   .abs_section_257
-     _PTP                                       258       1       1       1   .abs_section_258
+     _PTP                                       258       1       1       7   .abs_section_258
      _PTIP                                      259       1       1       0   .abs_section_259
      _DDRP                                      25A       1       1       1   .abs_section_25a
      _PERP                                      25C       1       1       1   .abs_section_25c
      _PPSP                                      25D       1       1       1   .abs_section_25d
      _PIEP                                      25E       1       1       1   .abs_section_25e
      _PIFP                                      25F       1       1       1   .abs_section_25f
-     _PTJ                                       268       1       1       5   .abs_section_268
+     _PTJ                                       268       1       1      11   .abs_section_268
      _PTIJ                                      269       1       1       0   .abs_section_269
      _DDRJ                                      26A       1       1       4   .abs_section_26a
      _PERJ                                      26C       1       1       0   .abs_section_26c
@@ -1581,7 +1624,7 @@ OBJECT LIST SORTED BY ADDRESS
      _PIE01AD                                   27C       2       2       0   .abs_section_27c
      _PIF01AD                                   27E       2       2       0   .abs_section_27e
      _CPMULVCTL                                 2F1       1       1       0   .abs_section_2f1
-     _CPMUAPICTL                                2F2       1       1       0   .abs_section_2f2
+     _CPMUAPICTL                                2F2       1       1       1   .abs_section_2f2
      _CPMUACLKTR                                2F3       1       1       0   .abs_section_2f3
      _CPMUAPIR                                  2F4       2       2       0   .abs_section_2f4
      _CPMUIRCTRIM                               2F8       2       2       0   .abs_section_2f8
@@ -1590,138 +1633,158 @@ OBJECT LIST SORTED BY ADDRESS
      ms_1.1                                    2100       2       2       4   .bss        
      ms_10.2                                   2102       2       2       4   .bss        
      ms_100.3                                  2104       2       2       4   .bss        
-     ms_1000.4                                 2106       2       2       3   .bss        
-     cont.3                                    2108       2       2       3   .bss        
-     cont0.1                                   210A       2       2       2   .bss        
-     cont1.2                                   210C       2       2       2   .bss        
-     g_pulse_count                             210E       2       2       2   .bss        
-     s_channel                                 2110       1       1       4   .bss        
-     admux0_cont                               2111       2       2       7   .bss        
-     admux1_cont                               2113       2       2       7   .bss        
-     mc33978_rtn                               2115       4       4      12   .bss        
-     pulse_temp                                2119       4       4       9   .common     
-     can_process                               211D       3       3       3   .common     
-     ID_6A4_data                               2120       6       6       6   .common     
-     ID_454_data                               2126       6       6       6   .common     
-     ID_681_data                               212C       8       8      33   .common     
-     ID_671_data                               2134       9       9       1   .common     
-     ID_561_data                               213D       8       8       1   .common     
-     ID_451_data                               2145       8       8       1   .common     
-     ID_68x_data                               214D       2       2       2   .common     
-     ID_67x_data                               214F       2       2       1   .common     
-     ID_56x_data                               2151       2       2       1   .common     
-     ID_45x_data                               2153       2       2       1   .common     
-     ID_67x                                    2155       4       4       2   .common     
-     ID_68x                                    2159       4       4       4   .common     
-     ID_56x                                    215D       4       4       2   .common     
-     ID_45x                                    2161       4       4       2   .common     
-     s_input                                   2165       3       3      19   .common     
-     TimeOutConfig                             2168       1       1       4   .common     
-     RunTime                                   2169       2       2       7   .common     
-     capture                                   216B       4       4       3   .common     
-     pulse                                     216F       4       4       2   .common     
-     CtrlOutBuffer                             2173       6       6       1   .common     
-     fir_err                                   2179       3       3       4   .common     
-     MC_SELECT                                 217C       2       2       7   .common     
-     adc_cont                                  217E       2       2      12   .common     
-     u16_adc_buff                              2180      40      64       2   .common     
-     u16_admux0_data                           21C0      2C      44       1   .common     
-     u16_admux1_data                           21EC      2C      44       1   .common     
+     cont.3                                    2106       2       2       3   .bss        
+     cont0.1                                   2108       2       2       2   .bss        
+     cont1.2                                   210A       2       2       2   .bss        
+     s_pulse_cont                              210C       1       1       5   .bss        
+     s_channel                                 210D       1       1       4   .bss        
+     per_old                                   210E       2       2       2   .bss        
+     admux0_cont                               2110       2       2       3   .bss        
+     admux1_cont                               2112       2       2       3   .bss        
+     pulse_temp                                2114       4       4       9   .common     
+     can_process                               2118       3       3       3   .common     
+     ID_70x_data                               211B       8       8      41   .common     
+     ID_71x_data                               2123       8       8       2   .common     
+     ID_72x_data                               212B       8       8      39   .common     
+     ID_73x_data                               2133       8       8       2   .common     
+     ID_74x_data                               213B       8       8       2   .common     
+     ID_75x_data                               2143       8       8       2   .common     
+     ID_76x_data                               214B       8       8       2   .common     
+     ID_77x_data                               2153       8       8       2   .common     
+     ID_78x_data                               215B       8       8       2   .common     
+     ID_79x_data                               2163       8       8       2   .common     
+     ID_7Ax_data                               216B       8       8       2   .common     
+     ID_7Bx_data                               2173       8       8       2   .common     
+     ID_70x                                    217B       4       4       4   .common     
+     ID_71x                                    217F       4       4       4   .common     
+     ID_72x                                    2183       4       4       4   .common     
+     ID_73x                                    2187       4       4       4   .common     
+     ID_74x                                    218B       4       4       4   .common     
+     ID_75x                                    218F       4       4       4   .common     
+     ID_76x                                    2193       4       4       4   .common     
+     ID_77x                                    2197       4       4       4   .common     
+     ID_78x                                    219B       4       4       4   .common     
+     ID_79x                                    219F       4       4       4   .common     
+     ID_7Ax                                    21A3       4       4       4   .common     
+     ID_7Bx                                    21A7       4       4       4   .common     
+     mc33978_rtn                               21AB       4       4      12   .common     
+     TimeOutConfig                             21AF       1       1       4   .common     
+     RunTime                                   21B0       2       2       7   .common     
+     capture                                   21B2       4       4       3   .common     
+     pulse                                     21B6      28      40       4   .common     
+     CtrlOutBuffer                             21DE       6       6       1   .common     
+     fir_err                                   21E4       6       6       4   .common     
+     MC_SELECT                                 21EA       2       2       6   .common     
+     adc_cont                                  21EC       2       2       8   .common     
+     u16_adc_buff                              21EE      40      64       2   .common     
+     u16_admux_data                            222E      2C      44      11   .common     
+     Select_addr                               225A       2       2       1   .common     
+     s_input                                   225C       3       3      19   .common     
      _Startup                                  C000       F      15       1   .init       
-     ADMUX0_CH                                 C019      14      20       1   .rodata     
-     ADMUX1_CH                                 C02D      16      22       1   .rodata     
-     _LSHL                                     C043      11      17       4   NON_BANKED  
-     _LSHRU                                    C054      11      17       2   NON_BANKED  
-     _LCMP                                     C065      19      25       2   NON_BANKED  
-     _lDivMod                                  C07E      BE     190       1   NON_BANKED  
-     _LDIVU                                    C13C       E      14       1   NON_BANKED  
-     _CASE_CHECKED_BYTE                        C14A      14      20       4   NON_BANKED  
-     MCU_init_reset                            C15E      17      23       3   NON_BANKED  
-     isr_default                               C175       1       1      55   NON_BANKED  
-     isrVapi                                   C176       1       1       1   NON_BANKED  
-     isrVcanrx                                 C177       A      10       1   NON_BANKED  
-     isrVportj                                 C181       9       9       1   NON_BANKED  
-     ivVtimch0                                 C18A      1C      28       1   NON_BANKED  
-     ivVtimch1                                 C1A6      1C      28       1   NON_BANKED  
-     ivVtimch2                                 C1C2      41      65       1   NON_BANKED  
+     ADMUX0_CH                                 C019      16      22       1   .rodata     
+     ADMUX1_CH                                 C02F      16      22       1   .rodata     
+     _LSHL                                     C045      11      17       4   NON_BANKED  
+     _LSHRU                                    C056      11      17       1   NON_BANKED  
+     _lDivMod                                  C067      BE     190       1   NON_BANKED  
+     _LDIVU                                    C125       E      14       1   NON_BANKED  
+     _ILSEXT                                   C133       7       7      12   NON_BANKED  
+     _CASE_CHECKED_BYTE                        C13A      14      20       4   NON_BANKED  
+     MCU_init_reset                            C14E      17      23       3   NON_BANKED  
+     isr_default                               C165       1       1      55   NON_BANKED  
+     isrVapi                                   C166       5       5       1   NON_BANKED  
+     isrVcanrx                                 C16B       A      10       1   NON_BANKED  
+     isrVportj                                 C175       5       5       1   NON_BANKED  
+     ivVtimch0                                 C17A      1C      28       1   NON_BANKED  
+     ivVtimch1                                 C196      1C      28       1   NON_BANKED  
+     ivVtimch2                                 C1B2      5F      95       1   NON_BANKED  
      _InterruptVectorTable                     FF80      80     128       0   .abs_section_ff80
-     polling                                  88000      A7     167       2   .text       
-     main                                     880A7      3B      59       2   .text       
-     Init                                     880E2      29      41       2   .text       
-     memset                                   8810B      18      24       6   .text       
-     System_init                              88123      36      54       2   .text       
-     delay_1us                                88159       8       8       2   .text       
-     delay_nus                                88161      13      19       4   .text       
-     Hal_Port_Init                            88174      44      68       2   .text       
-     Hal_Spi_Init                             881B8      24      36       2   .text       
-     SPI_Byte                                 881DC      12      18       8   .text       
-     pulse_count                              881EE       8       8       2   .text       
-     hal_can_init                             881F6      70     112       2   .text       
-     hal_Can_SendData                         88266      A1     161       3   .text       
-     hal_can_receive                          88307      D7     215       2   .text       
-     ID_Select                                883DE      41      65       2   .text       
-     can_receive_protocol                     8841F      62      98       3   .text       
-     can_50ms_process0                        88481      19      25       2   .text       
-     hal_adc_init                             8849A      1D      29       2   .text       
-     set_adc_ch                               884B7       4       4       2   .text       
-     get_adc_ch                               884BB       4       4       2   .text       
-     hal_read_adc                             884BF      15      21       6   .text       
-     MCU_init                                 884D4      26      38       2   .text       
-     ChipSelect                               884FA      30      48       2   .text       
-     ChipCancel                               8852A       B      11       2   .text       
-     mc33978_write                            88535      2F      47      22   .text       
-     CheckSpi                                 88564      30      48       4   .text       
-     mc33978_Input_Init                       88594      77     119       2   .text       
-     mc33978_Adc_Init                         8860B      95     149       2   .text       
-     mc33978_AMUX                             886A0      13      19       2   .text       
-     mc33978_ReadSwtichStatus                 886B3     127     295       2   .text       
-     GetAdcData                               887DA     105     261       5   .text       
-     GlobalParaInit                           888DF      36      54       2   .text       
-     initialize_TIM                           88915      45      69       2   .text       
+     polling                                  88000      D5     213       2   .text       
+     main                                     880D5      66     102       2   .text       
+     Init                                     8813B      29      41       2   .text       
+     memcpy                                   88164      24      36       4   .text       
+     memset                                   88188      18      24       6   .text       
+     System_init                              881A0      36      54       2   .text       
+     delay_1us                                881D6       8       8       2   .text       
+     delay_nus                                881DE      13      19       4   .text       
+     delay_1ms                                881F1      11      17       2   .text       
+     Hal_Port_Init                            88202      4F      79       2   .text       
+     Hal_Spi_Init                             88251      24      36       2   .text       
+     SPI_Byte                                 88275      12      18       8   .text       
+     Hal_Pwm_Init                             88287      25      37       2   .text       
+     Change_Pwm                               882AC       9       9       2   .text       
+     hal_can_init                             882B5      81     129       2   .text       
+     hal_Can_SendData                         88336      AD     173      23   .text       
+     hal_can_receive                          883E3      D7     215       2   .text       
+     ID_Select                                884BA      A9     169       2   .text       
+     can_receive_protocol                     88563      21      33       3   .text       
+     can_process0                             88584      19      25       2   .text       
+     can_process1                             8859D      29      41       2   .text       
+     Current_AUIR3315                         885C6      2C      44       2   .text       
+     Current_BTS6143                          885F2      2C      44       8   .text       
+     Current_BTS740                           8861E      2C      44       8   .text       
+     can_process3                             8864A      29      41       2   .text       
+     can_process4                             88673      29      41       2   .text       
+     can_process5                             8869C      29      41       2   .text       
+     can_process6                             886C5      29      41       2   .text       
+     can_process7                             886EE      29      41       2   .text       
+     can_process8                             88717      29      41       2   .text       
+     can_process9                             88740      29      41       2   .text       
+     can_processA                             88769      29      41       2   .text       
+     can_processB                             88792      29      41       2   .text       
+     hal_adc_init                             887BB      1D      29       2   .text       
+     set_adc_ch                               887D8       4       4       4   .text       
+     get_adc_ch                               887DC       4       4       2   .text       
+     hal_read_adc                             887E0      15      21       8   .text       
+     MCU_init                                 887F5      22      34       2   .text       
+     ChipSelect                               88817      30      48       2   .text       
+     ChipCancel                               88847       B      11       2   .text       
+     mc33978_write                            88852      2F      47      22   .text       
+     CheckSpi                                 88881      30      48       4   .text       
+     mc33978_Input_Init                       888B1      77     119       2   .text       
+     mc33978_Adc_Init                         88928      95     149       2   .text       
+     mc33978_AMUX                             889BD      13      19       2   .text       
+     GlobalParaInit                           889D0      36      54       2   .text       
+     initialize_TIM                           88A06      40      64       2   .text       
+     RenovatingOutput                         88A46     223     547       2   .text       
+     GetInput                                 88C69     127     295       2   .text       
+     GetPer                                   88D90      46      70       2   .text       
+     GetAdcsingleData                         88DD6      81     129       2   .text       
+     GetAdcData                               88E57      57      87       2   .text       
 
 *********************************************************************************************
 UNUSED-OBJECTS SECTION
 ---------------------------------------------------------------------------------------------
 NOT USED PROCEDURES
 STRING.C.o (ansibi.lib):
-  strerror memchr memcmp memcpy2 memcpy _memcpy_8bitCount memmove 
+  strerror memchr memcmp memcpy2 _memcpy_8bitCount memmove 
   _memset_clear_8bitCount strlen strset strcat strncat strcpy strncpy strcmp 
   strncmp strchr strrchr strspn strcspn strpbrk strstr strtok strcoll strxfrm 
 rtshc12.c.o (ansibi.lib):
   _BSHL _BSHRS _BSHRU _BDIVMODU _BDIVMODS _ISHL _ISHRU _ISHRS _LSHRS _LADD 
-  _LSUB _LAND _LOR _LXOR _LCMP_P _LCMP_PP _LNEG _LCOM _LINC _LDEC _LMUL 
-  _LMULU16x32 _LMULS16x32 _NEG_P _LDIVS _LMODU _LMODS _ILSEXT _COPY 
-  _CASE_DIRECT _CASE_DIRECT_BYTE _CASE_CHECKED _CASE_SEARCH _CASE_SEARCH_BYTE 
-  _CASE_SEARCH_8 _CASE_SEARCH_8_BYTE _FCALL _FPCMP 
+  _LSUB _LAND _LOR _LXOR _LCMP _LCMP_P _LCMP_PP _LNEG _LCOM _LINC _LDEC _LMUL 
+  _LMULU16x32 _LMULS16x32 _NEG_P _LDIVS _LMODU _LMODS _COPY _CASE_DIRECT 
+  _CASE_DIRECT_BYTE _CASE_CHECKED _CASE_SEARCH _CASE_SEARCH_BYTE _CASE_SEARCH_8 
+  _CASE_SEARCH_8_BYTE _FCALL _FPCMP 
 hal_system.c.o:
-  delay_1ms delay_nms 
+  delay_nms 
 hal_spi.c.o:
   SPI_byte_write SPI_byte_read 
 hal_int.c.o:
   hal_irq_init hal_api_init 
-time_base.c.o:
-  mea_fre_init fre_200ms_process Update_Out_Ctrl 
-protocol.c.o:
-  can_500ms_process1 can_100ms_process2 can_1000ms_process3 can_100ms_process4 
 MC33978.C.o:
-  mc33978_DeviceConfiguration GetInputStatus 
+  mc33978_DeviceConfiguration 
 NOT USED VARIABLES
 main.c.o:
-  adc_time.5 
+  adc_time.4 
 STRING.C.o (ansibi.lib):
   STRING..1 next.2 
 rtshc12.c.o (ansibi.lib):
   _PowOfTwo_8 _PowOfTwo_16 _PowOfTwo_32 errno 
-time_base.c.o:
-  g_mea_fre 
-protocol.c.o:
-  ID_682_data ID_683_data ID_672_data ID_673_data ID_562_data ID_563_data 
-  ID_452_data ID_453_data 
 
 *********************************************************************************************
 COPYDOWN SECTION
 ---------------------------------------------------------------------------------------------
-------- ROM-ADDRESS: 0xC203 ---- SIZE       2 ---
+------- ROM-ADDRESS: 0xC211 ---- SIZE       2 ---
 Filling bytes inserted
  0000
 
@@ -1731,49 +1794,75 @@ OBJECT-DEPENDENCIES SECTION
 _Startup                  USES __SEG_END_SSTACK Init main 
 _LDIVU                    USES _lDivMod 
 MCU_init_reset            USES _MMCCTL1 _PKGCR _DIRECT _IVBR _ECLKCTL _Startup 
+isrVapi                   USES _CPMUAPICTL 
 isrVcanrx                 USES hal_can_receive _CANRFLG 
-isrVportj                 USES pulse_count _PIFJ 
+isrVportj                 USES _PIFJ 
 ivVtimch0                 USES _TC0 cont0.1 capture pulse_temp _TFLG1 
 ivVtimch1                 USES _TC1 cont1.2 capture pulse_temp _TFLG1 
-ivVtimch2                 USES cont.3 pulse_temp pulse _TFLG1 _TCNT _TC2 
-                                TimeOutConfig RunTime 
+ivVtimch2                 USES cont.3 s_pulse_cont pulse_temp pulse _TFLG1 
+                                _TCNT _TC2 TimeOutConfig RunTime 
 _InterruptVectorTable     USES isr_default isrVapi isrVcanrx isrVportj 
                                 ivVtimch2 ivVtimch1 ivVtimch0 MCU_init_reset 
-polling                   USES TimeOutConfig ms_1.1 ms_10.2 ms_100.3 ms_1000.4 
-                                adc_cont hal_read_adc u16_adc_buff _CASE_CHECKED_BYTE 
-                                GetAdcData can_50ms_process0 mc33978_ReadSwtichStatus 
+polling                   USES TimeOutConfig ms_1.1 ms_10.2 ms_100.3 adc_cont 
+                                hal_read_adc u16_adc_buff _CASE_CHECKED_BYTE GetInput 
+                                RenovatingOutput GetPer can_process0 GetAdcData can_process1 
+                                can_process3 can_process4 can_process5 can_process6 
+                                can_process7 can_process8 can_process9 can_processA 
+                                can_processB 
 main                      USES GlobalParaInit MCU_init MC_SELECT 
-                                mc33978_Input_Init fir_err hal_read_adc polling mc33978_Adc_Init 
+                                mc33978_Input_Init fir_err delay_1ms _PTJ Select_addr ID_Select 
+                                hal_read_adc polling mc33978_Adc_Init 
 Init                      USES _startupData 
 System_init               USES _CPMUPROT _CPMUCLKS _CPMUREFDIV _CPMUSYNR 
                                 _CPMUPOSTDIV _CPMUOSC _CPMUPLL _CPMUFLG 
 delay_nus                 USES delay_1us 
-Hal_Port_Init             USES _PTS _PPSS _WOMS _PERS _DDRS _PORTCD _PUCR 
-                                _DDRCD _PTT _PPST _PERT _DDRT _PIEP _PIFP _PTP _PPSP 
-                                _PERP _DDRP 
+Hal_Port_Init             USES _DDRAB _DDRM _PTS _PPSS _WOMS _PERS _DDRS 
+                                _PORTCD _PUCR _DDRCD _PTT _PPST _PERT _DDRT _PIEP 
+                                _PIFP _PTP _PPSP _PERP _DDRP 
 Hal_Spi_Init              USES _DDRJ _DDRAB _SPI1CR1 _SPI1CR2 _SPI1BR 
 SPI_Byte                  USES _SPI1SR _SPI1DR 
-pulse_count               USES g_pulse_count 
+Hal_Pwm_Init              USES _PWME _PWMPOL _PWMCLK _PWMCAE _PWMCTL _PWMDTY67 
+                                _PWMPER67 _PWMSCLA _PWMSCLB _PWMPRCLK 
+Change_Pwm                USES _PWMPER67 _PWMDTY67 
 hal_can_init              USES _CANCTL0 _CANCTL1 _CANBTR0 _CANBTR1 _CANIDAC 
                                 _CANIDAR0 _CANIDAR1 _CANIDAR2 _CANIDAR3 _CANIDAR4 
                                 _CANIDAR5 _CANIDAR6 _CANIDAR7 _CANIDMR0 _CANIDMR1 
                                 _CANIDMR2 _CANIDMR3 _CANIDMR4 _CANIDMR5 _CANIDMR6 
                                 _CANIDMR7 _CANRFLG _CANRIER can_process 
-hal_Can_SendData          USES _CANTFLG hal_Can_SendData _CANTBSEL _CANTXIDR3 
-                                _LSHRU _CANTXIDR2 _CANTXIDR1 _CANTXIDR0 _CANTXDSR0 
-                                _CANTXDLR _CANTXTBPR 
+hal_Can_SendData          USES _CANCTL0 hal_Can_SendData _CANTFLG _CANTBSEL 
+                                _LSHRU _CANTXIDR0 _CANTXIDR1 _CANTXIDR2 _CANTXIDR3 
+                                _CANTXDSR0 _CANTXDLR _CANTXTBPR 
 hal_can_receive           USES _CANRXDLR _CANRXDSR0 _CANRXIDR0 _CANRXIDR1 
                                 _CANRXIDR2 _CANRXIDR3 _LSHL can_process 
-ID_Select                 USES ID_67x ID_68x ID_56x ID_45x ID_681_data 
-                                ID_68x_data ID_671_data ID_67x_data ID_561_data 
-                                ID_56x_data ID_451_data ID_45x_data 
-can_receive_protocol      USES _LCMP ID_6A4_data ID_454_data 
-can_50ms_process0         USES ID_68x ID_68x_data hal_Can_SendData 
+ID_Select                 USES _ILSEXT ID_70x ID_71x ID_72x ID_73x ID_74x 
+                                ID_75x ID_76x ID_77x ID_78x ID_79x ID_7Ax ID_7Bx 
+can_receive_protocol      USES ID_72x ID_72x_data memcpy 
+can_process0              USES ID_70x ID_70x_data hal_Can_SendData 
+can_process1              USES ID_71x_data u16_admux_data memcpy ID_71x 
+                                hal_Can_SendData 
+can_process3              USES ID_73x_data u16_admux_data Current_AUIR3315 
+                                ID_73x hal_Can_SendData 
+can_process4              USES ID_74x_data u16_admux_data Current_BTS6143 
+                                ID_74x hal_Can_SendData 
+can_process5              USES ID_75x_data u16_admux_data Current_BTS6143 
+                                ID_75x hal_Can_SendData 
+can_process6              USES ID_76x_data u16_admux_data Current_BTS6143 
+                                ID_76x hal_Can_SendData 
+can_process7              USES ID_77x_data u16_admux_data Current_BTS6143 
+                                ID_77x hal_Can_SendData 
+can_process8              USES ID_78x_data u16_admux_data Current_BTS740 
+                                ID_78x hal_Can_SendData 
+can_process9              USES ID_79x_data u16_admux_data Current_BTS740 
+                                ID_79x hal_Can_SendData 
+can_processA              USES ID_7Ax_data u16_admux_data Current_BTS740 
+                                ID_7Ax hal_Can_SendData 
+can_processB              USES ID_7Bx_data u16_admux_data Current_BTS740 
+                                ID_7Bx hal_Can_SendData 
 hal_adc_init              USES _ATDCTL23 _ATDCTL01 _ATDCTL45 _ATDDIEN 
 set_adc_ch                USES s_channel 
 get_adc_ch                USES s_channel 
 hal_read_adc              USES s_channel _ATDDR0 _ATDCTL45 
-MCU_init                  USES System_init Hal_Port_Init ID_Select 
+MCU_init                  USES System_init Hal_Port_Init Hal_Pwm_Init 
                                 Hal_Spi_Init initialize_TIM hal_adc_init 
                                 can_receive_protocol hal_can_init 
 ChipSelect                USES MC_SELECT _CASE_CHECKED_BYTE _PTJ _PORTAB 
@@ -1783,16 +1872,20 @@ CheckSpi                  USES mc33978_rtn mc33978_write
 mc33978_Input_Init        USES RunTime CheckSpi mc33978_write delay_nus 
 mc33978_Adc_Init          USES RunTime CheckSpi mc33978_write delay_nus 
 mc33978_AMUX              USES mc33978_write 
-mc33978_ReadSwtichStatus  USES MC_SELECT mc33978_write mc33978_rtn s_input 
-                                ID_681_data 
-GetAdcData                USES get_adc_ch admux0_cont admux1_cont adc_cont 
-                                GetAdcData u16_admux0_data MC_SELECT ADMUX0_CH 
-                                u16_admux1_data ADMUX1_CH mc33978_AMUX u16_adc_buff set_adc_ch 
-                                hal_read_adc _LDIVU 
 GlobalParaInit            USES TimeOutConfig RunTime capture memset 
                                 CtrlOutBuffer fir_err 
 initialize_TIM            USES _DDRT _PACTL _TSCR1 _TIOS _TCTL4 _TCTL1 _TCTL2 
                                 _TIE _TSCR2 _TFLG1 _TFLG2 _TCNT _TC1 
+RenovatingOutput          USES ID_72x_data _PTT _PORTAB _PTM _PORTCD _PTJ _PTP 
+                                _PTS per_old Change_Pwm 
+GetInput                  USES MC_SELECT mc33978_write mc33978_rtn s_input 
+                                ID_70x_data 
+GetPer                    USES pulse ID_70x_data 
+GetAdcsingleData          USES adc_cont set_adc_ch hal_read_adc u16_adc_buff 
+                                _LDIVU u16_admux_data MC_SELECT mc33978_AMUX 
+GetAdcData                USES get_adc_ch admux0_cont admux1_cont ADMUX0_CH 
+                                ADMUX1_CH GetAdcsingleData set_adc_ch hal_read_adc 
+                                adc_cont 
 
 *********************************************************************************************
 DEPENDENCY TREE
@@ -1811,7 +1904,7 @@ DEPENDENCY TREE
  |  |  |    
  |  |  +- Hal_Port_Init       
  |  |  |    
- |  |  +- ID_Select           
+ |  |  +- Hal_Pwm_Init        
  |  |  |    
  |  |  +- Hal_Spi_Init        
  |  |  |    
@@ -1821,7 +1914,7 @@ DEPENDENCY TREE
  |  |  |    
  |  |  +- can_receive_protocol
  |  |  |  | 
- |  |  |  +- _LCMP               
+ |  |  |  +- memcpy              
  |  |  |       
  |  |  +- hal_can_init        
  |  |       
@@ -1845,6 +1938,12 @@ DEPENDENCY TREE
  |  |     | 
  |  |     +- delay_1us           
  |  |          
+ |  +- delay_1ms           
+ |  |    
+ |  +- ID_Select           
+ |  |  | 
+ |  |  +- _ILSEXT             
+ |  |       
  |  +- hal_read_adc        
  |  |    
  |  +- polling             
@@ -1853,31 +1952,103 @@ DEPENDENCY TREE
  |  |  |  
  |  |  +- _CASE_CHECKED_BYTE   (see above)
  |  |  |  
- |  |  +- GetAdcData          
+ |  |  +- GetInput            
  |  |  |  | 
- |  |  |  +- get_adc_ch          
- |  |  |  |    
- |  |  |  +- mc33978_AMUX        
- |  |  |  |  | 
- |  |  |  |  +- mc33978_write        (see above)
- |  |  |  |     
- |  |  |  +- set_adc_ch          
- |  |  |  |    
- |  |  |  +- hal_read_adc         (see above)
- |  |  |  |  
- |  |  |  +- _LDIVU              
- |  |  |     | 
- |  |  |     +- _lDivMod            
- |  |  |          
- |  |  +- can_50ms_process0   
+ |  |  |  +- mc33978_write        (see above)
+ |  |  |     
+ |  |  +- RenovatingOutput    
+ |  |  |  | 
+ |  |  |  +- Change_Pwm          
+ |  |  |       
+ |  |  +- GetPer              
+ |  |  |    
+ |  |  +- can_process0        
  |  |  |  | 
  |  |  |  +- hal_Can_SendData    
  |  |  |     | 
  |  |  |     +- _LSHRU              
  |  |  |          
- |  |  +- mc33978_ReadSwtichStatus
+ |  |  +- GetAdcData          
+ |  |  |  | 
+ |  |  |  +- get_adc_ch          
+ |  |  |  |    
+ |  |  |  +- GetAdcsingleData    
+ |  |  |  |  | 
+ |  |  |  |  +- set_adc_ch          
+ |  |  |  |  |    
+ |  |  |  |  +- hal_read_adc         (see above)
+ |  |  |  |  |  
+ |  |  |  |  +- _LDIVU              
+ |  |  |  |  |  | 
+ |  |  |  |  |  +- _lDivMod            
+ |  |  |  |  |       
+ |  |  |  |  +- mc33978_AMUX        
+ |  |  |  |     | 
+ |  |  |  |     +- mc33978_write        (see above)
+ |  |  |  |        
+ |  |  |  +- set_adc_ch           (see above)
+ |  |  |  |  
+ |  |  |  +- hal_read_adc         (see above)
+ |  |  |     
+ |  |  +- can_process1        
+ |  |  |  | 
+ |  |  |  +- memcpy               (see above)
+ |  |  |  |  
+ |  |  |  +- hal_Can_SendData     (see above)
+ |  |  |     
+ |  |  +- can_process3        
+ |  |  |  | 
+ |  |  |  +- Current_AUIR3315    
+ |  |  |  |    
+ |  |  |  +- hal_Can_SendData     (see above)
+ |  |  |     
+ |  |  +- can_process4        
+ |  |  |  | 
+ |  |  |  +- Current_BTS6143     
+ |  |  |  |    
+ |  |  |  +- hal_Can_SendData     (see above)
+ |  |  |     
+ |  |  +- can_process5        
+ |  |  |  | 
+ |  |  |  +- Current_BTS6143      (see above)
+ |  |  |  |  
+ |  |  |  +- hal_Can_SendData     (see above)
+ |  |  |     
+ |  |  +- can_process6        
+ |  |  |  | 
+ |  |  |  +- Current_BTS6143      (see above)
+ |  |  |  |  
+ |  |  |  +- hal_Can_SendData     (see above)
+ |  |  |     
+ |  |  +- can_process7        
+ |  |  |  | 
+ |  |  |  +- Current_BTS6143      (see above)
+ |  |  |  |  
+ |  |  |  +- hal_Can_SendData     (see above)
+ |  |  |     
+ |  |  +- can_process8        
+ |  |  |  | 
+ |  |  |  +- Current_BTS740      
+ |  |  |  |    
+ |  |  |  +- hal_Can_SendData     (see above)
+ |  |  |     
+ |  |  +- can_process9        
+ |  |  |  | 
+ |  |  |  +- Current_BTS740       (see above)
+ |  |  |  |  
+ |  |  |  +- hal_Can_SendData     (see above)
+ |  |  |     
+ |  |  +- can_processA        
+ |  |  |  | 
+ |  |  |  +- Current_BTS740       (see above)
+ |  |  |  |  
+ |  |  |  +- hal_Can_SendData     (see above)
+ |  |  |     
+ |  |  +- can_processB        
  |  |     | 
- |  |     +- mc33978_write        (see above)
+ |  |     +- Current_BTS740       (see above)
+ |  |     |  
+ |  |     +- hal_Can_SendData     (see above)
  |  |        
  |  +- mc33978_Adc_Init    
  |     | 
@@ -1906,9 +2077,7 @@ DEPENDENCY TREE
  |     +- _LSHL               
  |          
  +- isrVportj           
- |  | 
- |  +- pulse_count         
- |       
+ |    
  +- ivVtimch2           
  |    
  +- ivVtimch1           
@@ -1925,6 +2094,6 @@ STATISTIC SECTION
 
 ExeFile:
 --------
-Number of blocks to be downloaded: 6
-Total size of all blocks to be downloaded: 3039
+Number of blocks to be downloaded: 5
+Total size of all blocks to be downloaded: 4417
 

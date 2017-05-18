@@ -56,6 +56,30 @@ typedef union {
 } SW_STATUS;
 
 
+#define AD_CH_SG0    0x01
+#define AD_CH_SG1    0x02
+#define AD_CH_SG2    0x03
+#define AD_CH_SG3    0x04
+#define AD_CH_SG4    0x05
+#define AD_CH_SG5    0x06
+#define AD_CH_SG6    0x07
+#define AD_CH_SG7    0x08
+#define AD_CH_SG8    0x09
+#define AD_CH_SG9    0x0A
+#define AD_CH_SG10   0x0B
+#define AD_CH_SG11   0x0C
+#define AD_CH_SG12   0x0D
+#define AD_CH_SG13   0x0E
+
+#define AD_CH_SP0    0x0F
+#define AD_CH_SP1    0x10
+#define AD_CH_SP2    0x11
+#define AD_CH_SP3    0x12
+#define AD_CH_SP4    0x13
+#define AD_CH_SP5    0x14
+#define AD_CH_SP6    0x15
+#define AD_CH_SP7    0x16
+#define ADC_CH_SIGN_SIZE	0x16	
 
 
 #define SELECT_INPUT_MC()	        do{MC_SELECT = 0;}while(0)
@@ -66,13 +90,20 @@ typedef union {
 #define ADMUX_CH0			0X00
 #define ADMUX_CH1           0X08
 
+
+
+
+
+extern unsigned char mc33978_rtn[4];
+
+
 ERROR_TYPEDEF mc33978_Input_Init(void) ;
 ERROR_TYPEDEF mc33978_Adc_Init(void) ;
 
 void mc33978_DeviceConfiguration(unsigned char mode);
 void mc33978_AMUX(unsigned char chs);
-void mc33978_ReadSwtichStatus(void) ;
 void GetAdcData(void);
+void mc33978_write(unsigned char cmd, unsigned char config1, unsigned char config2, unsigned char config3) ;
 
 
 #endif
