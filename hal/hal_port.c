@@ -1,8 +1,12 @@
 #include <MC9S12G128.h>   
 
 void Hal_Port_Init(void)
-
  {
+ //===========================prot a=========================================//  
+ 	DDRAB_DDRA = 0x0F;
+    DDRAB_DDRB = 0xFF;
+ //===========================prot M=========================================//  
+ 	DDRM = 0x0C;
  //===========================prot s=========================================//  
   /* ### Init_GPIO init code */
   /* PTS: PTS7=0,PTS6=0,PTS5=0,PTS4=0,PTS3=0,PTS2=0,PTS1=0,PTS0=0 */
@@ -15,7 +19,7 @@ void Hal_Port_Init(void)
   PERS = 0xFFU;                                      
   /* DDRS: DDRS7=1,DDRS6=1,DDRS5=1,DDRS4=1,DDRS3=1,DDRS2=1,DDRS1=1,DDRS0=1 */
   DDRS = 0xFFU;           
-  
+
 //===========================prot c=========================================//  
    /* ### Init_GPIO init code */
   /* PORTC: PC7=0,PC6=0,PC5=0,PC4=0,PC3=0,PC2=0,PC1=0,PC0=0 */
@@ -46,7 +50,9 @@ void Hal_Port_Init(void)
   /* DDRT: DDRT7=1,DDRT6=1,DDRT5=1,DDRT4=1,DDRT3=1,DDRT2=1,DDRT1=1,DDRT0=1 */
   DDRT = 0xFFU;                                      
   /* ### */
-  
+  //===========================prot j=========================================//
+  DDRJ_DDRJ5 = 1;
+  DDRJ_DDRJ4 = 1;
  //===========================prot p=========================================//
   
     /* Disable interrupts */
