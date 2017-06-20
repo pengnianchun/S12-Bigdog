@@ -7,7 +7,7 @@
 #include "hal_can.h" 
 #include "hal_port.h"
 #include "protocol.h" 
-
+#include "config.h"
 
                               
 ID_70_TYPE   ID_70x_data;
@@ -38,6 +38,59 @@ uint32_t ID_7Ax;
 uint32_t ID_7Bx;
 
 //====================================================================//
+static unsigned int GetHalAddr(void)
+{
+  	//!<Todo:获取地址
+  	unsigned int temp = 0;
+#if 0
+	//电平需要取反
+	temp = Ctrl_In1?0:1;
+	temp |= Ctrl_In2?0:2;
+#else
+	GetInput();
+	temp = GetBigdogAddr();
+#endif
+    return temp;
+}
+/**
+ * @LockAddr
+ * @说明:用于锁定地址需要定时调用；
+ */
+void LockAddr(void)
+{
+	unsigned int temp = 0;
+	if (mode_addr_err_timeout>0)
+	{
+		mode_addr_err_timeout--;
+	}
+	else
+	{
+		mode_addr_error = 0;
+	}
+	if(mode_addr_timeout<LOCK_ADDR_TIMEOUT)
+	{
+		mode_addr_look = 0;
+		mode_addr_timeout++;
+		temp = GetHalAddr();
+		if (temp != Select_addr)
+		{
+			Select_addr = temp;
+			mode_addr_timeout = 0;
+			ID_Select(Select_addr);
+		}
+		else if(mode_addr_error != 0)
+		{
+			//!地址冲突不能进行锁定
+			mode_addr_timeout = 0;
+		}
+	}
+	else
+	{
+		mode_addr_look = 1;
+		
+	}
+}
+
 void ID_Select(int addr)
 {
 
@@ -65,12 +118,33 @@ void can_receive_protocol(uint32_t ID,uint8_t mode,uint8_t length,uint8_t *data)
 	{
 		memcpy(&ID_72x_data,data,8);
 	}
+	else if(ID == ID_70x)
+	{
+		//!<地址冲突
+		mode_addr_error = 1;
+		mode_addr_err_timeout = ADDR_ERR_TIMEOUT;
+	}
+	else if(OnlineCheckID == ID)
+	{
+		OnlineCheckConfig = 1;
+	}
+	else if(ExcuteAppID == ID)
+	{
+		ExecutiveEraseFlashConfig = 1;
+	}
 }
  
  
 void can_process0(void) 
 {
-  
+  if (mode_addr_error == 1)
+  {
+  	ID_70x_data.addr_err = Select_addr;
+  }
+  else
+  {
+  	ID_70x_data.addr_err = 0xFF;
+  }
  hal_Can_SendData(ID_70x,STANDARD,0x03,8,&ID_70x_data); 
  
 }
@@ -86,45 +160,54 @@ void can_process1(void)
  * Iif = V/R;
  * 1bit = 5V/256;
  *      = 5V/R/256
- * R = 1K;
- * 1bit = 5/256mA
+ * R = 0.51K;
+ * 1bit = 5/256/0.51 mA
  * n为采样点
- * ==> Ir = n * 5/256*2800mA = 54.6875mA/bit
+ * ==> Ir = n * 5/256/0.51*2800mA = 107.2mA/bit
  */
-#define AUIR3315_Ratio  5468/100
-void Current_AUIR3315(void *src,void *des,int len)
+#define AUIR3315_Ratio  1072/10
+void Current_AUIR3315(void *des,void *src,int len)
 {
-	u16 *pOut = (u16 *)des;
+	u8 *pOut = (u8 *)des;
 	u8 *pIn = (u8*)src;
-	for(;len<=0;len--)
+	u16 temp,i=0;
+	for(;len>0;len--)
 	{
-		*pOut++ = (*pIn)*AUIR3315_Ratio;
-		*pIn++;
+		temp = (unsigned long)(*pIn)*AUIR3315_Ratio;
+		pOut[i++] =  temp &0xFF;
+		pOut[i++] =  (temp>>8)&0xFF;
+		pIn++;
 	}
 }
 //!<BTS 6143 D 电流 比率 9700
-// Ir = n * 5/256*9700 mA = 183.4
-#define BTS6143_Ratio  1834/10
-void Current_BTS6143(void *src,void *des,int len)
+// Ir = n * 5/256/2*9700 mA = 94.7 mA/bit
+#define BTS6143_Ratio  947/10
+void Current_BTS6143(void *des,void *src,int len)
 {
-	u16 *pOut = (u16 *)des;
+	u8 *pOut = (u8 *)des;
 	u8 *pIn = (u8*)src;
-	for(;len<=0;len--)
+	u16 temp,i=0;
+	for(;len>0;len--)
 	{
-		*pOut++ = (*pIn)*BTS6143_Ratio;
+		temp = (unsigned long)(*pIn)*BTS6143_Ratio;
+		pOut[i++] =  temp &0xFF;
+		pOut[i++] =  (temp>>8)&0xFF;
 		*pIn++;
 	}
 }
 //!<BTS740S2 电流 比率 4800
-//!<Ir = n * 5/256*4800 mA = 93.75
-#define BTS740_Ratio    937/10
-void Current_BTS740(void *src,void *des,int len)
+//!<Ir = n * 5/256/2*4800 mA = 46.88 mA/bit
+#define BTS740_Ratio    469/10
+void Current_BTS740(void *des,void *src,int len)
 {
-	u16 *pOut = (u16 *)des;
+	u8 *pOut = (u8 *)des;
 	u8 *pIn = (u8*)src;
-	for(;len<=0;len--)
+	u16 temp,i=0;
+	for(;len>0;len--)
 	{
-		*pOut++ = (*pIn)*BTS740_Ratio;
+		temp = (unsigned long)(*pIn)*BTS740_Ratio;
+		pOut[i++] =  temp &0xFF;
+		pOut[i++] =  (temp>>8)&0xFF;
 		*pIn++;
 	}
 }
@@ -165,8 +248,8 @@ void can_process8(void)
 }
 void can_process9(void) 
 {
- Current_BTS740(&ID_79x_data,&u16_admux_data[25],4);
- hal_Can_SendData(ID_79x,STANDARD,0x03,8,&ID_79x_data); 
+ 	Current_BTS740(&ID_79x_data,&u16_admux_data[25],4);
+ 	hal_Can_SendData(ID_79x,STANDARD,0x03,8,&ID_79x_data); 
 }
 void can_processA(void) 
 {
@@ -177,4 +260,19 @@ void can_processB(void)
 {
  Current_BTS740(&ID_7Bx_data,&u16_admux_data[33],4);
  hal_Can_SendData(ID_7Bx,STANDARD,0x03,8,&ID_7Bx_data); 
+}
+
+//=============================================================
+void ExecutiveCheckHandle(void)
+{
+	u8 data[8];
+	data[0] = VERSIONS_MAJOR>>8;
+	data[1] = VERSIONS_MAJOR;
+	data[2] = VERSIONS_MINOR>>8;
+	data[3] = VERSIONS_MINOR;
+	data[4] = 0;
+	data[5] = 0;
+	data[6] = 0;
+	data[7] = CAN_BL_APP;
+	hal_Can_SendData(OnlineCheckID,EXTENDED,0x03,8,data); 
 }

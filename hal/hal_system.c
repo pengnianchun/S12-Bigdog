@@ -5,7 +5,8 @@
 
 void System_init(void)
 {
-
+	
+	IVBR = 0x7FU; //…Ë÷√÷–∂œ”≥…‰ 
 	/* CPMUPROT: PROT=0 */
 	CPMUPROT = 0x26U;                    /* Disable protection of clock configuration registers */
 	/* CPMUCLKS: PSTP=0 */

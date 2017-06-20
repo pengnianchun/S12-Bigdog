@@ -27,11 +27,13 @@ static void MCU_init_reset(void)
   /* DIRECT: DP15=0,DP14=0,DP13=0,DP12=0,DP11=0,DP10=0,DP9=0,DP8=0 */
   DIRECT = 0x00U;                                      
   /* IVBR: IVB_ADDR=0xFF */
-  IVBR = 0xFFU;                                      
+  //IVBR = 0xFFU;
+  IVBR = 0x7FU;
   /* ECLKCTL: NECLK=1,NCLKX2=1,DIV16=0,EDIV4=0,EDIV3=0,EDIV2=0,EDIV1=0,EDIV0=0 */
   ECLKCTL = 0xC0U;                                      
   /* Jump to the default entry point */
   /*lint -save  -e950 Disable MISRA rule (1.1) checking. */
+
   asm jmp _Startup;
   /*lint -restore Enable MISRA rule (1.1) checking. */
 } /*MCU_init*/
@@ -161,7 +163,7 @@ __interrupt void ivVtimch2(void)
 	static u16 cont = 0;;
 	cont++;
 	
-	if(cont>10000){
+	if(cont>1000){
 	  cont = 0;
 	  s_pulse_cont ++;
 	  if(s_pulse_cont>=PUSLE_SEVE_DATA_SIZE)
@@ -193,7 +195,7 @@ typedef void (*near tIsrFunc)(void);
   #define UNASSIGNED_ISR isr_default   /* unassigned interrupt service routine */
 #endif
 /*lint -save  -e950 Disable MISRA rule (1.1) checking. */
-static const tIsrFunc _InterruptVectorTable[]  @0xFF80U= { /* Interrupt vector table */
+static const tIsrFunc _InterruptVectorTable[]  @0x7F80U= { /* Interrupt vector table */
 /*lint -restore Enable MISRA rule (1.1) checking. */
   /* ISR name                               No.  Address  Name          Description */
   &UNASSIGNED_ISR,                      /* 0x40  0xFF80   ivVsi         unused by PE */

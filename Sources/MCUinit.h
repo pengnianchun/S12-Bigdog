@@ -51,6 +51,11 @@ extern void MCU_init(void);
 
 
 /* END mcuinit */
+#define VERSIONS_MAJOR	(1u)
+#define VERSIONS_MINOR	(0u)
+#define CAN_BL_APP		(1u)
+
+
 
 #endif
 

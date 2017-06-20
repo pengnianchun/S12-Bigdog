@@ -17,7 +17,6 @@
 #define ID_7Bx_BASE	0x7B0
 
 
-
 typedef union {
       uint8_t Byte;
       struct {
@@ -73,7 +72,14 @@ void can_process9(void) ;
 void can_processA(void) ;
 void can_processB(void) ;
 
+/*********************************************************/
 
+#define OnlineCheckID       0x131//检测节点是否在线
+#define ExcuteAppID         0x139//回退到boot
+
+
+void ExecutiveCheckHandle(void);
+void LockAddr(void);
 
 
 

@@ -2,9 +2,9 @@
 #define _HAL_PORT_
 
 #define Ctrl_Out1         PTT_PTT3
-#define Ctrl_Out2         PTT_PTT6
+#define Ctrl_Out2         PTT_PTT4
 #define Ctrl_Out3         PTT_PTT5
-#define Ctrl_Out4         PTT_PTT4
+#define Ctrl_Out4         PTT_PTT6
 #define Ctrl_Out5         PORTA_PA1
 #define Ctrl_Out6         PTM_PTM2
 #define Ctrl_Out7         PORTD_PD7
@@ -48,6 +48,7 @@
 
 #define Ctrl_In1           PTJ_PTJ7
 #define Ctrl_In2           PTJ_PTJ6 
+#define Ctrl_ctr		   PTS_PTS3
 
 //电源控制
 #define POWER_CTRL_5V      PTS_PTS1		// 未使用

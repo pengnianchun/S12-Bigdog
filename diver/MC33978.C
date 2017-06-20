@@ -54,6 +54,7 @@ ERROR_TYPEDEF CheckSpi(void)
 	
     mc33978_write(0x0, 0, 0, 0);
     mc33978_write(0x0, 0, 0, 0);
+	
 	if ((mc33978_rtn[0] == 0x00)&&(mc33978_rtn[1] == 0x12)&&(mc33978_rtn[2] == 0x34)&&(mc33978_rtn[3] == 0x56))
 	{
 		return OK;
