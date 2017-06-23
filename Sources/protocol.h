@@ -36,9 +36,10 @@ typedef struct
    multdata input1;   
    multdata input2;
    multdata input3;
+   uint8_t addr_err;
    uint8_t per1[2];
    uint8_t per2[2];
-   uint8_t addr_err;
+   
 }ID_70_TYPE;
 typedef struct 
 {

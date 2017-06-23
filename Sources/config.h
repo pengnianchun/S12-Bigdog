@@ -1,10 +1,15 @@
 #ifndef CONFIG_H__
   #define CONFIG_H__
+//!<软件版本号 v1.1
+#define VERSIONS_MAJOR	(1u)
+#define VERSIONS_MINOR	(1u)
+#define CAN_BL_APP		(1u)
+#define VERSION		"MC9S12G128 BIGDOGv1.1 2017-06-23"
 
 
 #define LOCK_ADDR_TIMEOUT	500		//定义锁定地址时间，含义和时基有关
 #define ADDR_ERR_TIMEOUT    500
-#define FRONT_MODULE_ADDR	0x02    //前模块地址
+#define FRONT_MODULE_ADDR	0x00    //前模块地址
 #define WASH_TIMEOUT		300
 #define WIPE_INT_TIMEOUT    300
 #define WIPE_STOP_TIMEOUT   2000
@@ -27,6 +32,11 @@
     2.增加雨刮程序。
     3.增加地址选择程序。
     4.增加休眠程序。
+  2017-6-22 17:42:20
+    修改地址异常报文位置。 协议修改
+  2017-6-23 09:34:15
+    修改雨刮地址定义
+  
 ********************************************************************/
 /*******************************************************************
 硬件整改记录:

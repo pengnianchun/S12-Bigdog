@@ -192,7 +192,7 @@ void main(void) {
 		//!<收到更新程序命令
 		DisableInterrupts;
 		memset(&ID_72x_data,0,8);
-		RenovatingOutput();
+		InitOutput();
 		asm call 0xf000,00
 	}
   }
