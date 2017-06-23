@@ -57,6 +57,7 @@ void InitOutput(void)
 	Ctrl_Out21 = 0;Ctrl_Out22 = 0;Ctrl_Out23 = 0;Ctrl_Out24 = 0;Ctrl_Out25 = 0;Ctrl_Out26 = 0;
 }
 
+
 void RenovatingOutput(void)
 {
 	u16 dty,per;
