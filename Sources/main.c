@@ -6,8 +6,8 @@
 #include "ctrlin.h"
 #include "ctrlout.h"
 #include "config.h"
-//!<教研字必须为32byte整数倍
-static const char _AppcheckString[32]  @0x4000= "S12G128 Bigdog";
+//!<校验字必须为32byte整数倍
+static const char _AppcheckString[64]  @0x4000= "S12G128 Bigdog";
 
 
 void polling(void)
@@ -127,7 +127,7 @@ void main(void) {
   //ID_Select(0);//!<默认选择地址，否者容易地址为0时无法输出电阻
   //(void)hal_read_adc();//丢弃一组数据  保证数据准确
 #ifndef DEBUG
-  for( ;;)
+  for(;;)
   {
   	switch(Task)
   	{

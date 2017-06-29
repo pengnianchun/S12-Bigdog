@@ -1,4 +1,4 @@
-*** EVALUATION ***
+
 PROGRAM "E:\WorkSpace\bigdog\bin\Project.abs"
 
 *********************************************************************************************
@@ -52,7 +52,7 @@ Section Name                    Size  Type     From       To       Segment
 .rodata                           44     R     0xC019     0xC044   ROM_C000
 NON_BANKED                       460     R     0xC045     0xC210   ROM_C000
 .copy                              2     R     0xC211     0xC212   ROM_C000
-.text                           5160     R    0x88000    0x89427   PAGE_08
+.text                           5176     R    0x88000    0x89437   PAGE_08
 .stack                           256   R/W     0x2000     0x20FF   RAM
 .abs_section_8                     1   N/I        0x8        0x8   .absSeg0
 .abs_section_9                     1   N/I        0x9        0x9   .absSeg1
@@ -317,14 +317,14 @@ NON_BANKED                       460     R     0xC045     0xC210   ROM_C000
 .abs_section_27e                   2   N/I      0x27E      0x27F   .absSeg260
 .abs_section_2f4                   2   N/I      0x2F4      0x2F5   .absSeg261
 .abs_section_2f8                   2   N/I      0x2F8      0x2F9   .absSeg262
-.abs_section_4000                 32     R     0x4000     0x401F   .absSeg263
+.abs_section_4000                 64     R     0x4000     0x403F   .absSeg263
 .abs_section_7f80                128     R     0x7F80     0x7FFF   .absSeg264
 .bss                              15   R/W     0x2100     0x210E   RAM
 .common                          359   R/W     0x210F     0x2275   RAM
 .vectSeg265_vect                   2     R     0xFFFE     0xFFFF   .vectSeg265
 
 Summary of section sizes per section type:
-READ_ONLY (R):        16DD (dec:     5853)
+READ_ONLY (R):        170D (dec:     5901)
 READ_WRITE (R/W):      276 (dec:      630)
 NO_INIT (N/I):         148 (dec:      328)
 
@@ -539,9 +539,9 @@ MODULE:                 -- mc9s12g128.c.o --
      _CPMUACLKTR                                2F3       1       1       0   .abs_section_2f3
      _CPMUOSC                                   2FA       1       1       1   .abs_section_2fa
      _CPMUPROT                                  2FB       1       1       2   .abs_section_2fb
-     _PORTAB                                      0       2       2      33   .abs_section_0
+     _PORTAB                                      0       2       2      38   .abs_section_0
      _DDRAB                                       2       2       2       5   .abs_section_2
-     _PORTCD                                      4       2       2      37   .abs_section_4
+     _PORTCD                                      4       2       2      40   .abs_section_4
      _DDRCD                                       6       2       2       2   .abs_section_6
      _PARTID                                     1A       2       2       0   .abs_section_1a
      _DBGTB                                      24       2       2       0   .abs_section_24
@@ -607,13 +607,13 @@ MODULE:                 -- mc9s12g128.c.o --
 MODULE:                 -- main.c.o --
 - PROCEDURES:
      polling                                  88000      F4     244       4   .text       
-     main                                     880F4     117     279       8   .text       
+     main                                     880F4     114     276       8   .text       
 - VARIABLES:
      Task                                      2100       2       2       4   .bss        
-     _AppcheckString                           4000      20      32       0   .abs_section_4000
+     _AppcheckString                           4000      40      64       0   .abs_section_4000
 MODULE:                 -- Start12.c.o --
 - PROCEDURES:
-     Init                                     8820B      29      41       2   .text       
+     Init                                     88208      29      41       2   .text       
      _Startup                                  C000       F      15       1   .init       
 - VARIABLES:
      _startupData                              C00F       6       6       3   .startData  
@@ -621,8 +621,8 @@ MODULE:                 -- Start12.c.o --
      __SEG_END_SSTACK                          2100       0       0       1               
 MODULE:                 -- STRING.C.o (ansibi.lib) --
 - PROCEDURES:
-     memcpy                                   88234      24      36       4   .text       
-     memset                                   88258      18      24      14   .text       
+     memcpy                                   88231      24      36       4   .text       
+     memset                                   88255      18      24      14   .text       
 - VARIABLES:
 MODULE:                 -- rtshc12.c.o (ansibi.lib) --
 - PROCEDURES:
@@ -635,20 +635,20 @@ MODULE:                 -- rtshc12.c.o (ansibi.lib) --
 - VARIABLES:
 MODULE:                 -- hal_system.c.o --
 - PROCEDURES:
-     System_init                              88270      3A      58       2   .text       
-     delay_1us                                882AA       8       8       2   .text       
-     delay_nus                                882B2      13      19       4   .text       
-     delay_1ms                                882C5      11      17       2   .text       
-     delay_nms                                882D6      13      19       6   .text       
+     System_init                              8826D      3A      58       2   .text       
+     delay_1us                                882A7       8       8       2   .text       
+     delay_nus                                882AF      13      19       4   .text       
+     delay_1ms                                882C2      11      17       2   .text       
+     delay_nms                                882D3      13      19       6   .text       
 - VARIABLES:
 MODULE:                 -- hal_port.c.o --
 - PROCEDURES:
-     Hal_Port_Init                            882E9      59      89       2   .text       
+     Hal_Port_Init                            882E6      59      89       2   .text       
 - VARIABLES:
 MODULE:                 -- hal_spi.c.o --
 - PROCEDURES:
-     Hal_Spi_Init                             88342      24      36       2   .text       
-     SPI_Byte                                 88366      12      18       8   .text       
+     Hal_Spi_Init                             8833F      24      36       2   .text       
+     SPI_Byte                                 88363      12      18       8   .text       
 - VARIABLES:
 MODULE:                 -- hal_int.c.o --
 - PROCEDURES:
@@ -669,41 +669,41 @@ MODULE:                 -- hal_int.c.o --
      pulse_temp                                210F       4       4       9   .common     
 MODULE:                 -- hal_pwm.c.o --
 - PROCEDURES:
-     Hal_Pwm_Init                             88378      25      37       2   .text       
-     Change_Pwm                               8839D       9       9       2   .text       
+     Hal_Pwm_Init                             88375      25      37       2   .text       
+     Change_Pwm                               8839A       9       9       2   .text       
 - VARIABLES:
 MODULE:                 -- hal_can.c.o --
 - PROCEDURES:
-     hal_can_init                             883A6      81     129       2   .text       
-     hal_Can_SendData                         88427      AD     173      25   .text       
-     hal_can_receive                          884D4      D7     215       2   .text       
+     hal_can_init                             883A3      81     129       2   .text       
+     hal_Can_SendData                         88424      AD     173      25   .text       
+     hal_can_receive                          884D1      D7     215       2   .text       
 - VARIABLES:
      can_process                               2113       3       3       3   .common     
 MODULE:                 -- protocol.c.o --
 - PROCEDURES:
-     GetHalAddr                               885AB       9       9       2   .text       
-     LockAddr                                 885B4      45      69       2   .text       
-     ID_Select                                885F9      A9     169       4   .text       
-     can_receive_protocol                     886A2      60      96       3   .text       
-     can_process0                             88702      28      40       2   .text       
-     can_process1                             8872A      29      41       2   .text       
-     Current_AUIR3315                         88753      5A      90       2   .text       
-     Current_BTS6143                          887AD      5A      90       8   .text       
-     Current_BTS740                           88807      5A      90       8   .text       
-     can_process3                             88861      29      41       2   .text       
-     can_process4                             8888A      29      41       2   .text       
-     can_process5                             888B3      29      41       2   .text       
-     can_process6                             888DC      29      41       2   .text       
-     can_process7                             88905      29      41       2   .text       
-     can_process8                             8892E      29      41       2   .text       
-     can_process9                             88957      29      41       2   .text       
-     can_processA                             88980      29      41       2   .text       
-     can_processB                             889A9      29      41       2   .text       
-     ExecutiveCheckHandle                     889D2      2A      42       2   .text       
+     GetHalAddr                               885A8       9       9       2   .text       
+     LockAddr                                 885B1      45      69       2   .text       
+     ID_Select                                885F6      A9     169       4   .text       
+     can_receive_protocol                     8869F      60      96       3   .text       
+     can_process0                             886FF      28      40       2   .text       
+     can_process1                             88727      29      41       2   .text       
+     Current_AUIR3315                         88750      5A      90       2   .text       
+     Current_BTS6143                          887AA      5A      90       8   .text       
+     Current_BTS740                           88804      5A      90       8   .text       
+     can_process3                             8885E      29      41       2   .text       
+     can_process4                             88887      29      41       2   .text       
+     can_process5                             888B0      29      41       2   .text       
+     can_process6                             888D9      29      41       2   .text       
+     can_process7                             88902      29      41       2   .text       
+     can_process8                             8892B      29      41       2   .text       
+     can_process9                             88954      29      41       2   .text       
+     can_processA                             8897D      29      41       2   .text       
+     can_processB                             889A6      29      41       2   .text       
+     ExecutiveCheckHandle                     889CF      2A      42       2   .text       
 - VARIABLES:
      ID_70x_data                               2116       8       8      51   .common     
      ID_71x_data                               211E       8       8       2   .common     
-     ID_72x_data                               2126       8       8      68   .common     
+     ID_72x_data                               2126       8       8      64   .common     
      ID_73x_data                               212E       8       8       2   .common     
      ID_74x_data                               2136       8       8       2   .common     
      ID_75x_data                               213E       8       8       2   .common     
@@ -727,30 +727,30 @@ MODULE:                 -- protocol.c.o --
      ID_7Bx                                    21A2       4       4       4   .common     
 MODULE:                 -- hal_adc.c.o --
 - PROCEDURES:
-     hal_adc_init                             889FC      1D      29       2   .text       
-     set_adc_ch                               88A19       4       4       4   .text       
-     get_adc_ch                               88A1D       4       4       2   .text       
-     hal_read_adc                             88A21      15      21       8   .text       
+     hal_adc_init                             889F9      1D      29       2   .text       
+     set_adc_ch                               88A16       4       4       4   .text       
+     get_adc_ch                               88A1A       4       4       2   .text       
+     hal_read_adc                             88A1E      15      21       8   .text       
 - VARIABLES:
      s_channel                                 2109       1       1       4   .bss        
 MODULE:                 -- MCUinit.c.o --
 - PROCEDURES:
-     MCU_init                                 88A36      22      34       2   .text       
+     MCU_init                                 88A33      22      34       2   .text       
 - VARIABLES:
 MODULE:                 -- MC33978.C.o --
 - PROCEDURES:
-     ChipSelect                               88A58      30      48       2   .text       
-     ChipCancel                               88A88       B      11       2   .text       
-     mc33978_write                            88A93      2F      47      22   .text       
-     CheckSpi                                 88AC2      30      48       4   .text       
-     mc33978_Input_Init                       88AF2      77     119       2   .text       
-     mc33978_Adc_Init                         88B69      95     149       2   .text       
-     mc33978_AMUX                             88BFE      13      19       2   .text       
+     ChipSelect                               88A55      30      48       2   .text       
+     ChipCancel                               88A85       B      11       2   .text       
+     mc33978_write                            88A90      2F      47      24   .text       
+     CheckSpi                                 88ABF      30      48       4   .text       
+     mc33978_Input_Init                       88AEF      81     129       2   .text       
+     mc33978_Adc_Init                         88B70      95     149       2   .text       
+     mc33978_AMUX                             88C05      13      19       2   .text       
 - VARIABLES:
      mc33978_rtn                               21A6       4       4      12   .common     
 MODULE:                 -- global.c.o --
 - PROCEDURES:
-     GlobalParaInit                           88C11      99     153       4   .text       
+     GlobalParaInit                           88C18      99     153       4   .text       
 - VARIABLES:
      TimeOutConfig                             21AA       1       1       4   .common     
      RunTime                                   21AB       2       2       7   .common     
@@ -781,14 +781,14 @@ MODULE:                 -- global.c.o --
      wipe_wpp_time                             2271       2       2       6   .common     
 MODULE:                 -- Hal_ECT.c.o --
 - PROCEDURES:
-     initialize_TIM                           88CAA      43      67       2   .text       
+     initialize_TIM                           88CB1      43      67       2   .text       
 - VARIABLES:
 MODULE:                 -- CtrlOut.c.o --
 - PROCEDURES:
-     InitOutput                               88CED      5A      90       2   .text       
-     RenovatingOutput                         88D47     231     561       4   .text       
-     rain_wape                                88F78     1CE     462      16   .text       
-     wipe_delay                               89146       A      10       2   .text       
+     InitOutput                               88CF4      5A      90       4   .text       
+     RenovatingOutput                         88D4E     22E     558       2   .text       
+     rain_wape                                88F7C     1DA     474      17   .text       
+     wipe_delay                               89156       A      10       2   .text       
 - VARIABLES:
      per_old                                   210A       2       2       2   .bss        
      DELAY_START                               210C       1       1       8   .bss        
@@ -796,11 +796,11 @@ MODULE:                 -- CtrlOut.c.o --
      RAIN_RST.1                                210E       1       1       2   .bss        
 MODULE:                 -- CtrlIn.c.o --
 - PROCEDURES:
-     GetBigdogAddr                            89150      1C      28       2   .text       
-     GetInput                                 8916C     186     390       4   .text       
-     GetPer                                   892F2      3A      58       2   .text       
-     GetAdcsingleData                         8932C      66     102       4   .text       
-     GetAdcData                               89392      96     150       2   .text       
+     GetBigdogAddr                            89160      1C      28       2   .text       
+     GetInput                                 8917C     186     390       4   .text       
+     GetPer                                   89302      3A      58       2   .text       
+     GetAdcsingleData                         8933C      66     102       4   .text       
+     GetAdcData                               893A2      96     150       2   .text       
 - VARIABLES:
      ADMUX0_CH                                 C019      16      22       1   .rodata     
      ADMUX1_CH                                 C02F      16      22       1   .rodata     
@@ -811,7 +811,7 @@ MODULE STATISTIC
   Name                                      Data   Code  Const
 ---------------------------------------------------------------------------------------------
   mc9s12g128.c.o                             328      0      0
-  main.c.o                                     2    523     32
+  main.c.o                                     2    520     64
   Start12.c.o                                  0     56      0
   STRING.C.o (ansibi.lib)                      0     60      0
   rtshc12.c.o (ansibi.lib)                     0    265      0
@@ -824,10 +824,10 @@ MODULE STATISTIC
   protocol.c.o                               144   1105      0
   hal_adc.c.o                                  1     58      0
   MCUinit.c.o                                  0     34      0
-  MC33978.C.o                                  4    441      0
+  MC33978.C.o                                  4    451      0
   global.c.o                                 201    153      0
   Hal_ECT.c.o                                  0     67      0
-  CtrlOut.c.o                                  5   1123      0
+  CtrlOut.c.o                                  5   1132      0
   CtrlIn.c.o                                   3    728     44
   other                                      256     12      2
 
@@ -1401,9 +1401,9 @@ SECTION: ".abs_section_7f80"
 OBJECT LIST SORTED BY ADDRESS
      Name                                      Addr   hSize   dSize     Ref    Section   RLIB
 ---------------------------------------------------------------------------------------------
-     _PORTAB                                      0       2       2      33   .abs_section_0
+     _PORTAB                                      0       2       2      38   .abs_section_0
      _DDRAB                                       2       2       2       5   .abs_section_2
-     _PORTCD                                      4       2       2      37   .abs_section_4
+     _PORTCD                                      4       2       2      40   .abs_section_4
      _DDRCD                                       6       2       2       2   .abs_section_6
      _PORTE                                       8       1       1       0   .abs_section_8
      _DDRE                                        9       1       1       0   .abs_section_9
@@ -1678,7 +1678,7 @@ OBJECT LIST SORTED BY ADDRESS
      can_process                               2113       3       3       3   .common     
      ID_70x_data                               2116       8       8      51   .common     
      ID_71x_data                               211E       8       8       2   .common     
-     ID_72x_data                               2126       8       8      68   .common     
+     ID_72x_data                               2126       8       8      64   .common     
      ID_73x_data                               212E       8       8       2   .common     
      ID_74x_data                               2136       8       8       2   .common     
      ID_75x_data                               213E       8       8       2   .common     
@@ -1729,7 +1729,7 @@ OBJECT LIST SORTED BY ADDRESS
      wipe_stop_time                            226F       2       2       6   .common     
      wipe_wpp_time                             2271       2       2       6   .common     
      s_input                                   2273       3       3      32   .common     
-     _AppcheckString                           4000      20      32       0   .abs_section_4000
+     _AppcheckString                           4000      40      64       0   .abs_section_4000
      _InterruptVectorTable                     7F80      80     128       0   .abs_section_7f80
      _Startup                                  C000       F      15       1   .init       
      ADMUX0_CH                                 C019      16      22       1   .rodata     
@@ -1749,65 +1749,65 @@ OBJECT LIST SORTED BY ADDRESS
      ivVtimch1                                 C196      1C      28       1   NON_BANKED  
      ivVtimch2                                 C1B2      5F      95       1   NON_BANKED  
      polling                                  88000      F4     244       4   .text       
-     main                                     880F4     117     279       8   .text       
-     Init                                     8820B      29      41       2   .text       
-     memcpy                                   88234      24      36       4   .text       
-     memset                                   88258      18      24      14   .text       
-     System_init                              88270      3A      58       2   .text       
-     delay_1us                                882AA       8       8       2   .text       
-     delay_nus                                882B2      13      19       4   .text       
-     delay_1ms                                882C5      11      17       2   .text       
-     delay_nms                                882D6      13      19       6   .text       
-     Hal_Port_Init                            882E9      59      89       2   .text       
-     Hal_Spi_Init                             88342      24      36       2   .text       
-     SPI_Byte                                 88366      12      18       8   .text       
-     Hal_Pwm_Init                             88378      25      37       2   .text       
-     Change_Pwm                               8839D       9       9       2   .text       
-     hal_can_init                             883A6      81     129       2   .text       
-     hal_Can_SendData                         88427      AD     173      25   .text       
-     hal_can_receive                          884D4      D7     215       2   .text       
-     GetHalAddr                               885AB       9       9       2   .text       
-     LockAddr                                 885B4      45      69       2   .text       
-     ID_Select                                885F9      A9     169       4   .text       
-     can_receive_protocol                     886A2      60      96       3   .text       
-     can_process0                             88702      28      40       2   .text       
-     can_process1                             8872A      29      41       2   .text       
-     Current_AUIR3315                         88753      5A      90       2   .text       
-     Current_BTS6143                          887AD      5A      90       8   .text       
-     Current_BTS740                           88807      5A      90       8   .text       
-     can_process3                             88861      29      41       2   .text       
-     can_process4                             8888A      29      41       2   .text       
-     can_process5                             888B3      29      41       2   .text       
-     can_process6                             888DC      29      41       2   .text       
-     can_process7                             88905      29      41       2   .text       
-     can_process8                             8892E      29      41       2   .text       
-     can_process9                             88957      29      41       2   .text       
-     can_processA                             88980      29      41       2   .text       
-     can_processB                             889A9      29      41       2   .text       
-     ExecutiveCheckHandle                     889D2      2A      42       2   .text       
-     hal_adc_init                             889FC      1D      29       2   .text       
-     set_adc_ch                               88A19       4       4       4   .text       
-     get_adc_ch                               88A1D       4       4       2   .text       
-     hal_read_adc                             88A21      15      21       8   .text       
-     MCU_init                                 88A36      22      34       2   .text       
-     ChipSelect                               88A58      30      48       2   .text       
-     ChipCancel                               88A88       B      11       2   .text       
-     mc33978_write                            88A93      2F      47      22   .text       
-     CheckSpi                                 88AC2      30      48       4   .text       
-     mc33978_Input_Init                       88AF2      77     119       2   .text       
-     mc33978_Adc_Init                         88B69      95     149       2   .text       
-     mc33978_AMUX                             88BFE      13      19       2   .text       
-     GlobalParaInit                           88C11      99     153       4   .text       
-     initialize_TIM                           88CAA      43      67       2   .text       
-     InitOutput                               88CED      5A      90       2   .text       
-     RenovatingOutput                         88D47     231     561       4   .text       
-     rain_wape                                88F78     1CE     462      16   .text       
-     wipe_delay                               89146       A      10       2   .text       
-     GetBigdogAddr                            89150      1C      28       2   .text       
-     GetInput                                 8916C     186     390       4   .text       
-     GetPer                                   892F2      3A      58       2   .text       
-     GetAdcsingleData                         8932C      66     102       4   .text       
-     GetAdcData                               89392      96     150       2   .text       
+     main                                     880F4     114     276       8   .text       
+     Init                                     88208      29      41       2   .text       
+     memcpy                                   88231      24      36       4   .text       
+     memset                                   88255      18      24      14   .text       
+     System_init                              8826D      3A      58       2   .text       
+     delay_1us                                882A7       8       8       2   .text       
+     delay_nus                                882AF      13      19       4   .text       
+     delay_1ms                                882C2      11      17       2   .text       
+     delay_nms                                882D3      13      19       6   .text       
+     Hal_Port_Init                            882E6      59      89       2   .text       
+     Hal_Spi_Init                             8833F      24      36       2   .text       
+     SPI_Byte                                 88363      12      18       8   .text       
+     Hal_Pwm_Init                             88375      25      37       2   .text       
+     Change_Pwm                               8839A       9       9       2   .text       
+     hal_can_init                             883A3      81     129       2   .text       
+     hal_Can_SendData                         88424      AD     173      25   .text       
+     hal_can_receive                          884D1      D7     215       2   .text       
+     GetHalAddr                               885A8       9       9       2   .text       
+     LockAddr                                 885B1      45      69       2   .text       
+     ID_Select                                885F6      A9     169       4   .text       
+     can_receive_protocol                     8869F      60      96       3   .text       
+     can_process0                             886FF      28      40       2   .text       
+     can_process1                             88727      29      41       2   .text       
+     Current_AUIR3315                         88750      5A      90       2   .text       
+     Current_BTS6143                          887AA      5A      90       8   .text       
+     Current_BTS740                           88804      5A      90       8   .text       
+     can_process3                             8885E      29      41       2   .text       
+     can_process4                             88887      29      41       2   .text       
+     can_process5                             888B0      29      41       2   .text       
+     can_process6                             888D9      29      41       2   .text       
+     can_process7                             88902      29      41       2   .text       
+     can_process8                             8892B      29      41       2   .text       
+     can_process9                             88954      29      41       2   .text       
+     can_processA                             8897D      29      41       2   .text       
+     can_processB                             889A6      29      41       2   .text       
+     ExecutiveCheckHandle                     889CF      2A      42       2   .text       
+     hal_adc_init                             889F9      1D      29       2   .text       
+     set_adc_ch                               88A16       4       4       4   .text       
+     get_adc_ch                               88A1A       4       4       2   .text       
+     hal_read_adc                             88A1E      15      21       8   .text       
+     MCU_init                                 88A33      22      34       2   .text       
+     ChipSelect                               88A55      30      48       2   .text       
+     ChipCancel                               88A85       B      11       2   .text       
+     mc33978_write                            88A90      2F      47      24   .text       
+     CheckSpi                                 88ABF      30      48       4   .text       
+     mc33978_Input_Init                       88AEF      81     129       2   .text       
+     mc33978_Adc_Init                         88B70      95     149       2   .text       
+     mc33978_AMUX                             88C05      13      19       2   .text       
+     GlobalParaInit                           88C18      99     153       4   .text       
+     initialize_TIM                           88CB1      43      67       2   .text       
+     InitOutput                               88CF4      5A      90       4   .text       
+     RenovatingOutput                         88D4E     22E     558       2   .text       
+     rain_wape                                88F7C     1DA     474      17   .text       
+     wipe_delay                               89156       A      10       2   .text       
+     GetBigdogAddr                            89160      1C      28       2   .text       
+     GetInput                                 8917C     186     390       4   .text       
+     GetPer                                   89302      3A      58       2   .text       
+     GetAdcsingleData                         8933C      66     102       4   .text       
+     GetAdcData                               893A2      96     150       2   .text       
 
 *********************************************************************************************
 UNUSED-OBJECTS SECTION
@@ -1868,7 +1868,7 @@ main                      USES GlobalParaInit _CPMUFLG MCU_init MC_SELECT
                                 mc33978_Input_Init fir_err main delay_nms Task _CASE_CHECKED_BYTE 
                                 _PTJ ID_Select hal_read_adc polling Select_addr 
                                 s_input _PTT _PTS InitOutput ExecutiveEraseFlashConfig 
-                                ID_72x_data memset RenovatingOutput mc33978_Adc_Init 
+                                ID_72x_data memset mc33978_Adc_Init 
 Init                      USES _startupData 
 System_init               USES _IVBR _CPMUPROT _CPMUCLKS _CPMUREFDIV _CPMUSYNR 
                                 _CPMUPOSTDIV _CPMUOSC _CPMUPLL _CPMUFLG 
@@ -1952,8 +1952,8 @@ InitOutput                USES _PTT _PORTAB _PTM _PORTCD _PTJ _PTP
 RenovatingOutput          USES Select_addr ID_72x_data _PTT rain_wape _PORTAB 
                                 _PTM _PORTCD _PTJ _PTP _PTS per_old Change_Pwm 
 rain_wape                 USES wipe_int_time wash_time wipe_stop_time 
-                                ID_72x_data DELAY_START rain_wape _PTT DELAY_END s_input 
-                                RAIN_RST.1 wipe_wpp_time _PTS 
+                                ID_72x_data DELAY_START rain_wape _PTT _PORTAB _PORTCD 
+                                DELAY_END s_input RAIN_RST.1 wipe_wpp_time _PTS 
 wipe_delay                USES wipe_wpp_time 
 GetBigdogAddr             USES s_input 
 GetInput                  USES MC_SELECT mc33978_write mc33978_rtn s_input 
@@ -2160,8 +2160,6 @@ DEPENDENCY TREE
  |  |    
  |  +- memset               (see above)
  |  |  
- |  +- RenovatingOutput     (see above)
- |  |  
  |  +- mc33978_Adc_Init    
  |     | 
  |     +- CheckSpi             (see above)
@@ -2207,5 +2205,5 @@ STATISTIC SECTION
 ExeFile:
 --------
 Number of blocks to be downloaded: 7
-Total size of all blocks to be downloaded: 5853
+Total size of all blocks to be downloaded: 5901
 
