@@ -14,7 +14,8 @@ SEGMENTS  /* Here all RAM/ROM areas of the device are listed. Used in PLACEMENT 
 
 /* non-paged FLASHs */
       ROM_1400      = READ_ONLY     0x1400 TO   0x1FFF;
-      ROM_4000      = READ_ONLY     0x4000 TO   0x7FFF;
+      CHECK_CODE    = READ_ONLY     0x4000 TO   0x401F;
+      ROM_4020      = READ_ONLY     0x4020 TO   0x7FFF;
       ROM_C000      = READ_ONLY     0xC000 TO   0xEDFF;
  /*   VECTORS       = READ_ONLY     0xFF00 TO   0xFFFF; intentionally not defined: used for VECTOR commands below */
    //OSVECTORS      = READ_ONLY     0xFF80 TO   0xFFFF;   /* OSEK interrupt vectors (use your vector.o) */
@@ -43,7 +44,7 @@ PLACEMENT /* here all predefined and user segments are placed into the SEGMENTS 
                               /* in case you want to use ROM_4000 here as well, make sure
                                  that all files (incl. library files) are compiled with the
                                  option: -OnB=b */
-                        INTO  ROM_C000, ROM_4000/**/;
+                         INTO  ROM_C000, CHECK_CODE,ROM_4020/**/;
 
       DEFAULT_ROM       INTO  PAGE_08, PAGE_09, PAGE_0A, PAGE_0B, PAGE_0C, PAGE_0C_A000, PAGE_0E                  ;
 

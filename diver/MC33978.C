@@ -82,7 +82,7 @@ ERROR_TYPEDEF mc33978_Input_Init(void)
 	mc33978_write(0x49, 0, 0, 0);
     delay_nus(100);
 	//DeviceConfiguration
-    mc33978_write(0x03, 0, 0x00, 0x00); //SP0-BAT SP1-7=GND
+    mc33978_write(0x03, 0, 0x00, 0xFB); //SP0-BAT SP1-7=GND
 
     //Tri-State SP Register
     mc33978_write(0x05, 0, 0, 0x00); //

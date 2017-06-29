@@ -180,7 +180,7 @@ void rain_wape(void)
         }
     }
     if (K_ON && RAIN_SPRAY) {
-        RAIN_SPRAY = 1; //喷水电机
+        RAIN_INTERVAL_OUT = 1; //喷水电机
         if (DELAY_START == 0) {
             DELAY_START = 1;
             wipe_wpp_time = WIPE_WPP_TIMEOUT;
@@ -195,7 +195,7 @@ void rain_wape(void)
             DELAY_END = 0;
         }
     } else {
-        if (wash_time <= 0) RAIN_SPRAY = 0;
+        if (wash_time <= 0) RAIN_INTERVAL_OUT = 0;
     }
     if (K_ON && !RAIN_SLOW && !RAIN_HIGH && RAIN_INTERVAL) {//间歇档
         if (wipe_int_time == 0) {
@@ -226,14 +226,14 @@ void rain_wape(void)
         if (!HOME_VOL && RAIN_HIGH_OUT && wipe_stop_time > 0) {
             RAIN_HIGH_OUT = 0;
             RAIN_SLOW_OUT = 1;
-            RAIN_SPRAY = 0;
+            RAIN_INTERVAL_OUT = 0;
             SET_RAIN_INTERVAL_CTR2;
             wipe_int_time = 0;
         }
         if (wipe_stop_time == 0) { //雨刮操作开关断开 20内强制关闭雨刮 保护雨刮电机
             RAIN_HIGH_OUT = 0;
             RAIN_SLOW_OUT = 0;
-            RAIN_SPRAY = 0;
+            RAIN_INTERVAL_OUT = 0;
             SET_RAIN_INTERVAL_CTR2;
             wipe_int_time = 0;
         }
@@ -256,7 +256,7 @@ void rain_wape(void)
         } else {
             RAIN_HIGH_OUT = 0;
             RAIN_SLOW_OUT = 0;
-            RAIN_SPRAY = 0;
+            RAIN_INTERVAL_OUT = 0;
             SET_RAIN_INTERVAL_CTR2;
             wipe_int_time = 0;
         }
