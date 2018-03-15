@@ -117,7 +117,7 @@ ERROR_TYPEDEF mc33978_Input_Init(void)
     mc33978_write(0x21, 0, 0, 0x00);
 
     //Wake-up Enable SG Register 
-    mc33978_write(0x21, 0, 0x00, 0x00);
+    mc33978_write(0x23, 0, 0x00, 0x00);
 
     // Polling Current Configuration SP Register
     mc33978_write(0x2D, 0, 0x00, 0x00);

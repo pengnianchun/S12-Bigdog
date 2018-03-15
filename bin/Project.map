@@ -1,5 +1,5 @@
 
-PROGRAM "E:\WorkSpace\bigdog\bin\Project.abs"
+PROGRAM "C:\Users\pnc\Desktop\应用程序\大模块\bigdog\bin\Project.abs"
 
 *********************************************************************************************
 TARGET SECTION
@@ -39,7 +39,7 @@ Entry point: 0xC000 (_Startup)
 _startupData is allocated at 0xC00F and uses 6 Bytes
 extern struct _tagStartup {
   unsigned nofZeroOut     1
-  _Range   pZeroOut       0x2100     374
+  _Range   pZeroOut       0x2100     384
   _Copy    *toCopyDownBeg 0xC211
 } _startupData;
 
@@ -52,7 +52,7 @@ Section Name                    Size  Type     From       To       Segment
 .rodata                           44     R     0xC019     0xC044   ROM_C000
 NON_BANKED                       460     R     0xC045     0xC210   ROM_C000
 .copy                              2     R     0xC211     0xC212   ROM_C000
-.text                           5176     R    0x88000    0x89437   PAGE_08
+.text                           5716     R    0x88000    0x89653   PAGE_08
 .stack                           256   R/W     0x2000     0x20FF   RAM
 .abs_section_8                     1   N/I        0x8        0x8   .absSeg0
 .abs_section_9                     1   N/I        0x9        0x9   .absSeg1
@@ -320,12 +320,12 @@ NON_BANKED                       460     R     0xC045     0xC210   ROM_C000
 .abs_section_4000                 64     R     0x4000     0x403F   .absSeg263
 .abs_section_7f80                128     R     0x7F80     0x7FFF   .absSeg264
 .bss                              15   R/W     0x2100     0x210E   RAM
-.common                          359   R/W     0x210F     0x2275   RAM
+.common                          369   R/W     0x210F     0x227F   RAM
 .vectSeg265_vect                   2     R     0xFFFE     0xFFFF   .vectSeg265
 
 Summary of section sizes per section type:
-READ_ONLY (R):        170D (dec:     5901)
-READ_WRITE (R/W):      276 (dec:      630)
+READ_ONLY (R):        1929 (dec:     6441)
+READ_WRITE (R/W):      280 (dec:      640)
 NO_INIT (N/I):         148 (dec:      328)
 
 *********************************************************************************************
@@ -786,25 +786,27 @@ MODULE:                 -- Hal_ECT.c.o --
 MODULE:                 -- CtrlOut.c.o --
 - PROCEDURES:
      InitOutput                               88CF4      5A      90       4   .text       
-     RenovatingOutput                         88D4E     22E     558       2   .text       
-     rain_wape                                88F7C     1DA     474      17   .text       
-     wipe_delay                               89156       A      10       2   .text       
+     RenovatingOutput                         88D4E     44A    1098       2   .text       
+     rain_wape                                89198     1DA     474      17   .text       
+     wipe_delay                               89372       A      10       2   .text       
 - VARIABLES:
      per_old                                   210A       2       2       2   .bss        
      DELAY_START                               210C       1       1       8   .bss        
      DELAY_END                                 210D       1       1       5   .bss        
      RAIN_RST.1                                210E       1       1       2   .bss        
+     gPout                                     2273       5       5      72   .common     
+     pout                                      2278       5       5      36   .common     
 MODULE:                 -- CtrlIn.c.o --
 - PROCEDURES:
-     GetBigdogAddr                            89160      1C      28       2   .text       
-     GetInput                                 8917C     186     390       4   .text       
-     GetPer                                   89302      3A      58       2   .text       
-     GetAdcsingleData                         8933C      66     102       4   .text       
-     GetAdcData                               893A2      96     150       2   .text       
+     GetBigdogAddr                            8937C      1C      28       2   .text       
+     GetInput                                 89398     186     390       4   .text       
+     GetPer                                   8951E      3A      58       2   .text       
+     GetAdcsingleData                         89558      66     102       4   .text       
+     GetAdcData                               895BE      96     150       2   .text       
 - VARIABLES:
      ADMUX0_CH                                 C019      16      22       1   .rodata     
      ADMUX1_CH                                 C02F      16      22       1   .rodata     
-     s_input                                   2273       3       3      32   .common     
+     s_input                                   227D       3       3      32   .common     
 
 *********************************************************************************************
 MODULE STATISTIC
@@ -827,7 +829,7 @@ MODULE STATISTIC
   MC33978.C.o                                  4    451      0
   global.c.o                                 201    153      0
   Hal_ECT.c.o                                  0     67      0
-  CtrlOut.c.o                                  5   1132      0
+  CtrlOut.c.o                                 15   1672      0
   CtrlIn.c.o                                   3    728     44
   other                                      256     12      2
 
@@ -1393,7 +1395,7 @@ SECTION: ".common"
   u16_adc_buff u16_admux_data OnlineCheckConfig ExecutiveEraseFlashConfig ms_1 
   ms_10 ms_100 adc_time Select_addr mode_addr_look mode_addr_error 
   mode_addr_timeout mode_addr_err_timeout wash_time wipe_int_time 
-  wipe_stop_time wipe_wpp_time s_input 
+  wipe_stop_time wipe_wpp_time gPout pout s_input 
 SECTION: ".abs_section_7f80"
   _InterruptVectorTable 
 
@@ -1728,7 +1730,9 @@ OBJECT LIST SORTED BY ADDRESS
      wipe_int_time                             226D       2       2       7   .common     
      wipe_stop_time                            226F       2       2       6   .common     
      wipe_wpp_time                             2271       2       2       6   .common     
-     s_input                                   2273       3       3      32   .common     
+     gPout                                     2273       5       5      72   .common     
+     pout                                      2278       5       5      36   .common     
+     s_input                                   227D       3       3      32   .common     
      _AppcheckString                           4000      40      64       0   .abs_section_4000
      _InterruptVectorTable                     7F80      80     128       0   .abs_section_7f80
      _Startup                                  C000       F      15       1   .init       
@@ -1800,14 +1804,14 @@ OBJECT LIST SORTED BY ADDRESS
      GlobalParaInit                           88C18      99     153       4   .text       
      initialize_TIM                           88CB1      43      67       2   .text       
      InitOutput                               88CF4      5A      90       4   .text       
-     RenovatingOutput                         88D4E     22E     558       2   .text       
-     rain_wape                                88F7C     1DA     474      17   .text       
-     wipe_delay                               89156       A      10       2   .text       
-     GetBigdogAddr                            89160      1C      28       2   .text       
-     GetInput                                 8917C     186     390       4   .text       
-     GetPer                                   89302      3A      58       2   .text       
-     GetAdcsingleData                         8933C      66     102       4   .text       
-     GetAdcData                               893A2      96     150       2   .text       
+     RenovatingOutput                         88D4E     44A    1098       2   .text       
+     rain_wape                                89198     1DA     474      17   .text       
+     wipe_delay                               89372       A      10       2   .text       
+     GetBigdogAddr                            8937C      1C      28       2   .text       
+     GetInput                                 89398     186     390       4   .text       
+     GetPer                                   8951E      3A      58       2   .text       
+     GetAdcsingleData                         89558      66     102       4   .text       
+     GetAdcData                               895BE      96     150       2   .text       
 
 *********************************************************************************************
 UNUSED-OBJECTS SECTION
@@ -1829,11 +1833,15 @@ hal_int.c.o:
   hal_irq_init hal_api_init 
 MC33978.C.o:
   mc33978_DeviceConfiguration 
+CtrlOut.c.o:
+  POUT_Protect 
 NOT USED VARIABLES
 STRING.C.o (ansibi.lib):
   STRING..1 next.2 
 rtshc12.c.o (ansibi.lib):
   _PowOfTwo_8 _PowOfTwo_16 _PowOfTwo_32 errno 
+CtrlOut.c.o:
+  PROTECT_THRESHOLD pf pcnt pcur 
 
 *********************************************************************************************
 COPYDOWN SECTION
@@ -1949,8 +1957,9 @@ GlobalParaInit            USES TimeOutConfig RunTime OnlineCheckConfig
 initialize_TIM            USES _DDRT _PACTL _TSCR1 _OCPD _TIOS _TCTL4 _TCTL1 
                                 _TCTL2 _TIE _TSCR2 _TFLG1 _TFLG2 _TCNT _TC1 
 InitOutput                USES _PTT _PORTAB _PTM _PORTCD _PTJ _PTP 
-RenovatingOutput          USES Select_addr ID_72x_data _PTT rain_wape _PORTAB 
-                                _PTM _PORTCD _PTJ _PTP _PTS per_old Change_Pwm 
+RenovatingOutput          USES Select_addr ID_72x_data gPout rain_wape pout 
+                                _PTT _PORTAB _PTM _PORTCD _PTJ _PTP _PTS per_old 
+                                Change_Pwm 
 rain_wape                 USES wipe_int_time wash_time wipe_stop_time 
                                 ID_72x_data DELAY_START rain_wape _PTT _PORTAB _PORTCD 
                                 DELAY_END s_input RAIN_RST.1 wipe_wpp_time _PTS 
@@ -2205,5 +2214,5 @@ STATISTIC SECTION
 ExeFile:
 --------
 Number of blocks to be downloaded: 7
-Total size of all blocks to be downloaded: 5901
+Total size of all blocks to be downloaded: 6441
 

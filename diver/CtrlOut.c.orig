@@ -86,27 +86,26 @@ void InitOutput(void)
 #define PROTECT_MAX_CNT    100
 
 unsigned char PROTECT_THRESHOLD[40]= {90,90,90,90,
-                                      60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,
-                                      18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18
-                                     };
-unsigned char pf[40]={0};
-static unsigned char pcnt[40]={0};
-unsigned int pcur[40]={0};
+60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,
+18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18};
+unsigned char pf[40];
+static unsigned char pcnt[40];
+unsigned int pcur[40];
 
 #if 1
 static void POUT_Protect(void)
 {
-    unsigned char i,j,dump;
+    unsigned char i,j,dump;    
     for(j = 0; j < 5; j++)
     {
-        dump = gPout.BYTES[j];
+		dump = gPout.BYTES[j];
         for (i = 0; i < 8; i++)
         {
             if ((dump & 0x01) == 1)  //一个AD值大约等于200mA
             {
                 if (pf[j * 8 + i] != 0x02)
                 {
-                    pcur[j * 8 + i] = u16_admux_data[j * 8 + i + 1];
+                    pcur[j * 8 + i] = u16_admux_data[j * 8 + i + 1]);
                     if (pcnt[j * 8 + i] >= (PROTECT_MAX_CNT))
                     {
                         pout.BYTES[j] = (pout.BYTES[j] & ~(0x01 << i));//关闭输出
@@ -193,9 +192,9 @@ void RenovatingOutput(void)
     gPout.BITS.O35  = ID_72x_data.out[4].Bits.bit2;
     gPout.BITS.O36  = ID_72x_data.out[4].Bits.bit3;
 
-    //POUT_Protect();
-
-    Ctrl_Out1 = pout.BITS.O1;
+	//POUT_Protect();
+	
+	Ctrl_Out1 = pout.BITS.O1;
     Ctrl_Out2 = pout.BITS.O2;
     Ctrl_Out3 = pout.BITS.O3;
     Ctrl_Out4 = pout.BITS.O4;
@@ -221,7 +220,7 @@ void RenovatingOutput(void)
     Ctrl_Out24 = pout.BITS.O24;
     Ctrl_Out25 = pout.BITS.O25;
     Ctrl_Out26 = pout.BITS.O26;
-    Ctrl_Out27 = pout.BITS.O27;
+	Ctrl_Out27 = pout.BITS.O27;
     Ctrl_Out28 = pout.BITS.O28;
     Ctrl_Out29 = pout.BITS.O29;
     Ctrl_Out30 = pout.BITS.O30;
