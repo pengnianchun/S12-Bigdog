@@ -79,6 +79,16 @@ void InitOutput(void)
     Ctrl_Out24 = 0;
     Ctrl_Out25 = 0;
     Ctrl_Out26 = 0;
+	Ctrl_Out27 = 0;
+    Ctrl_Out28 = 0;
+    Ctrl_Out29 = 0;
+    Ctrl_Out30 = 0;
+  	Ctrl_Out31 = 0;
+    Ctrl_Out32 = 0;
+    Ctrl_Out33 = 0;
+    Ctrl_Out34 = 0;
+    Ctrl_Out35 = 0;
+    Ctrl_Out36 = 0;
 }
 
 #define OPENLOAD_VALUE     6
@@ -137,6 +147,42 @@ static void POUT_Protect(void)
             dump = dump >> 1;
         }
     }
+	Ctrl_Out1 = pout.BITS.O1;
+    Ctrl_Out2 = pout.BITS.O2;
+    Ctrl_Out3 = pout.BITS.O3;
+    Ctrl_Out4 = pout.BITS.O4;
+    Ctrl_Out5 = pout.BITS.O5;
+    Ctrl_Out6 = pout.BITS.O6;
+    Ctrl_Out7 = pout.BITS.O7;
+    Ctrl_Out8 = pout.BITS.O8;
+    Ctrl_Out9 = pout.BITS.O9;
+    Ctrl_Out10 = pout.BITS.O10;
+    Ctrl_Out11 = pout.BITS.O11;
+    Ctrl_Out12 = pout.BITS.O12;
+    Ctrl_Out13 = pout.BITS.O13;
+    Ctrl_Out14 = pout.BITS.O14;
+    Ctrl_Out15 = pout.BITS.O15;
+    Ctrl_Out16 = pout.BITS.O16;
+    Ctrl_Out17 = pout.BITS.O17;
+    Ctrl_Out18 = pout.BITS.O18;
+    Ctrl_Out19 = pout.BITS.O19;
+    Ctrl_Out20 = pout.BITS.O20;
+    Ctrl_Out21 = pout.BITS.O21;
+    Ctrl_Out22 = pout.BITS.O22;
+    Ctrl_Out23 = pout.BITS.O23;
+    Ctrl_Out24 = pout.BITS.O24;
+    Ctrl_Out25 = pout.BITS.O25;
+    Ctrl_Out26 = pout.BITS.O26;
+    Ctrl_Out27 = pout.BITS.O27;
+    Ctrl_Out28 = pout.BITS.O28;
+    Ctrl_Out29 = pout.BITS.O29;
+    Ctrl_Out30 = pout.BITS.O30;
+    Ctrl_Out31 = pout.BITS.O31;
+    Ctrl_Out32 = pout.BITS.O32;
+    Ctrl_Out33 = pout.BITS.O33;
+    Ctrl_Out34 = pout.BITS.O34;
+    Ctrl_Out35 = pout.BITS.O35;
+    Ctrl_Out36 = pout.BITS.O36;
 }
 #endif
 
@@ -154,7 +200,13 @@ void RenovatingOutput(void)
     {
         rain_wape();
     }
-    gPout.BITS.O2   = ID_72x_data.out[0].Bits.bit1;
+
+	for(i=0;i<5;i++){
+		gPout.BYTES[i]=ID_72x_data.out[i].Byte;
+	}
+	
+
+    /*gPout.BITS.O2   = ID_72x_data.out[0].Bits.bit1;
     gPout.BITS.O3   = ID_72x_data.out[0].Bits.bit2;
 
     gPout.BITS.O5   = ID_72x_data.out[0].Bits.bit4;
@@ -191,48 +243,9 @@ void RenovatingOutput(void)
     gPout.BITS.O33  = ID_72x_data.out[4].Bits.bit0;
     gPout.BITS.O34  = ID_72x_data.out[4].Bits.bit1;
     gPout.BITS.O35  = ID_72x_data.out[4].Bits.bit2;
-    gPout.BITS.O36  = ID_72x_data.out[4].Bits.bit3;
+    gPout.BITS.O36  = ID_72x_data.out[4].Bits.bit3;*/
 
-    //POUT_Protect();
-
-    Ctrl_Out1 = pout.BITS.O1;
-    Ctrl_Out2 = pout.BITS.O2;
-    Ctrl_Out3 = pout.BITS.O3;
-    Ctrl_Out4 = pout.BITS.O4;
-    Ctrl_Out5 = pout.BITS.O5;
-    Ctrl_Out6 = pout.BITS.O6;
-    Ctrl_Out7 = pout.BITS.O7;
-    Ctrl_Out8 = pout.BITS.O8;
-    Ctrl_Out9 = pout.BITS.O9;
-    Ctrl_Out10 = pout.BITS.O10;
-    Ctrl_Out11 = pout.BITS.O11;
-    Ctrl_Out12 = pout.BITS.O12;
-    Ctrl_Out13 = pout.BITS.O13;
-    Ctrl_Out14 = pout.BITS.O14;
-    Ctrl_Out15 = pout.BITS.O15;
-    Ctrl_Out16 = pout.BITS.O16;
-    Ctrl_Out17 = pout.BITS.O17;
-    Ctrl_Out18 = pout.BITS.O18;
-    Ctrl_Out19 = pout.BITS.O19;
-    Ctrl_Out20 = pout.BITS.O20;
-    Ctrl_Out21 = pout.BITS.O21;
-    Ctrl_Out22 = pout.BITS.O22;
-    Ctrl_Out23 = pout.BITS.O23;
-    Ctrl_Out24 = pout.BITS.O24;
-    Ctrl_Out25 = pout.BITS.O25;
-    Ctrl_Out26 = pout.BITS.O26;
-    Ctrl_Out27 = pout.BITS.O27;
-    Ctrl_Out28 = pout.BITS.O28;
-    Ctrl_Out29 = pout.BITS.O29;
-    Ctrl_Out30 = pout.BITS.O30;
-    Ctrl_Out31 = pout.BITS.O31;
-    Ctrl_Out32 = pout.BITS.O32;
-    Ctrl_Out33 = pout.BITS.O33;
-    Ctrl_Out34 = pout.BITS.O34;
-    Ctrl_Out35 = pout.BITS.O35;
-    Ctrl_Out36 = pout.BITS.O36;
-
-
+    POUT_Protect();   
     //POD = gPout.BITS.OD;
 
 
