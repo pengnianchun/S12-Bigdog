@@ -9,6 +9,30 @@
 //!<校验字必须为32byte整数倍
 static const char _AppcheckString[64]  @0x4000= "S12G128 Bigdog";
 
+unsigned char get_hw_address(void) {
+    unsigned char i;
+    unsigned char dump[3] = {0, 0, 0};
+    unsigned char hw_address;
+
+    for (i = 0; i < 3; i++) {                //硬线读三次
+        delay_nms(10);
+        GetInput();
+        if ((IN_KL13 == 0) && (IN_KL14 == 0)) dump[i] = 1; //前模块
+       // else if ((IN_KL13 == 0) && (IN_KL14 == 1)) dump[i] = 2; //顶模块
+        else if ((IN_KL13 == 1) && (IN_KL14 == 0)) dump[i] = 2; //后模块
+        else dump[i] = 0;
+    }
+
+    if (dump[0] == dump[1]) hw_address = dump[0];        //取有两个相同的数据中的一个
+    else if (dump[1] == dump[2]) hw_address = dump[1];
+    else if (dump[2] == dump[0]) hw_address = dump[2];
+    else hw_address = 0;
+
+    Select_addr = 0x720+ hw_address;
+
+    return hw_address;
+    
+}
 
 void polling(void)
 {
@@ -62,7 +86,8 @@ void polling(void)
 					case 3:RenovatingOutput();break;
 					case 4:GetAdcData();break;
 					case 5:GetPer();
-					       LockAddr();break;
+					       //LockAddr();
+					       break;
 					case 6:GetAdcData();break;
 					case 7:can_process0();break;
 					case 8:GetAdcData();break;
@@ -80,8 +105,8 @@ void polling(void)
 							case 7:can_process9();break;
 							case 8:can_processA();break;
 							case 9:can_processB();break;
-							case 10:break;
-							case 11:break;
+							case 10:can_send_message_Pout();break;
+							case 11:can_send_message_Fout();break;
 							case 12:break;
 							case 13:break;
 							case 14:break;
@@ -107,7 +132,7 @@ static int Task = 0;
 
 #define SetTaskMode(mod)	do{Task = mod;}while(0)
 
-
+#define DEBUG
 void main(void) {
   GlobalParaInit();
   DisableInterrupts;
@@ -132,13 +157,13 @@ void main(void) {
   	switch(Task)
   	{
 		case TASK_IDLE:
-			if ((Ctrl_In1 == 0)||(Ctrl_In2 == 0))
+			//if ((Ctrl_In1 == 0)||(Ctrl_In2 == 0))
 			{
 				SetTaskMode(TASK_RUN);
 				POWER_CTRL_5V = 1;
   				POWER_CTRL_12V =1;
 				Ctrl_ctr = 0;
-				ID_Select(0);//!<默认选择地址，否者容易地址为0时无法输出电阻
+				ID_Select(get_hw_address());//!<默认选择地址，否者容易地址为0时无法输出电阻
 				CANCEL_ALL();
 				(void)hal_read_adc();//丢弃一组数据  保证数据准确
 				SELECT_ADC0_MC();
@@ -150,10 +175,10 @@ void main(void) {
 			break;
 		case TASK_RUN:
 			polling();
-			if ((Ctrl_In1 != 0)&&(Ctrl_In2 != 0))
-			{
-				SetTaskMode(TASK_DORMANT_READY);
-			}
+		//	if ((Ctrl_In1 != 0)&&(Ctrl_In2 != 0))
+		//	{
+		//		SetTaskMode(TASK_DORMANT_READY);
+		//	}
 			break;
 		case TASK_DORMANT_READY:
 			if (Select_addr != FRONT_MODULE_ADDR)
@@ -163,9 +188,9 @@ void main(void) {
 			}
 			else
 			{
-				if (HOME_VOL) {
+			if (HOME_VOL) {
 					if ((RAIN_HIGH_OUT == 0) && (RAIN_SLOW_OUT == 0)) {
-						if (RAIN_INTERVAL_CTR == 1) {
+						if (RAIN_FAST_CTL== 1) {
 							DisableInterrupts;
 							delay_nms(50);
 							SetTaskMode(TASK_DORMANT);
@@ -179,7 +204,7 @@ void main(void) {
 		case TASK_DORMANT:
 			DisableInterrupts;
 			InitOutput();
-			RAIN_INTERVAL_CTR = 0;
+			RAIN_FAST_CTL = 0;
 			POWER_CTRL_5V = 0;
  			POWER_CTRL_12V =0;
 			SetTaskMode(TASK_IDLE);
@@ -197,10 +222,16 @@ void main(void) {
 	}
   }
 #else
-	Ctrl_Out1 = 1;Ctrl_Out2 = 1;Ctrl_Out3 = 1;Ctrl_Out4 = 1;Ctrl_Out5 = 1;Ctrl_Out6 = 1;Ctrl_Out7 = 1;Ctrl_Out8 = 1;Ctrl_Out9 = 1;Ctrl_Out10 = 1;
-	Ctrl_Out11 = 1;Ctrl_Out12 = 1;Ctrl_Out13 = 1;Ctrl_Out14 = 1;Ctrl_Out15 = 1;Ctrl_Out16 = 1;Ctrl_Out17 = 1;Ctrl_Out18 = 1;Ctrl_Out19 = 1;Ctrl_Out20 = 1;
-	Ctrl_Out21 = 1;Ctrl_Out22 = 1;Ctrl_Out23 = 1;Ctrl_Out24 = 1;Ctrl_Out25 = 1;Ctrl_Out26 = 1;Ctrl_Out27 = 1;Ctrl_Out28 = 1;Ctrl_Out29 = 1;Ctrl_Out30 = 1;
-	Ctrl_Out31 = 1;Ctrl_Out32 = 1;Ctrl_Out33 = 1;Ctrl_Out34 = 1;Ctrl_Out35 = 1;Ctrl_Out36 = 1;
+Ctrl_Out1 = 1;
+Ctrl_Out2 = 1;
+Ctrl_Out3 = 1;
+Ctrl_Out4 = 1;
+Ctrl_Out14 = 1;
+//Ctrl_Out31 = 1;
+//	Ctrl_Out1 = 1;Ctrl_Out2 = 1;Ctrl_Out3 = 1;Ctrl_Out4 = 1;Ctrl_Out5 = 1;Ctrl_Out6 = 1;Ctrl_Out7 = 1;Ctrl_Out8 = 1;Ctrl_Out9 = 1;Ctrl_Out10 = 1;
+//	Ctrl_Out11 = 1;Ctrl_Out12 = 1;Ctrl_Out13 = 1;Ctrl_Out14 = 1;Ctrl_Out15 = 1;Ctrl_Out16 = 1;Ctrl_Out17 = 1;Ctrl_Out18 = 1;Ctrl_Out19 = 1;Ctrl_Out20 = 1;
+//	Ctrl_Out21 = 1;Ctrl_Out22 = 1;Ctrl_Out23 = 1;Ctrl_Out24 = 1;Ctrl_Out25 = 1;Ctrl_Out26 = 1;Ctrl_Out27 = 1;Ctrl_Out28 = 1;Ctrl_Out29 = 1;Ctrl_Out30 = 1;
+//	Ctrl_Out31 = 1;Ctrl_Out32 = 1;Ctrl_Out33 = 1;Ctrl_Out34 = 1;Ctrl_Out35 = 1;Ctrl_Out36 = 1;
 
 	for(;;)
 	{

@@ -10,8 +10,8 @@ volatile SW_STATUS s_input;
 unsigned int GetBigdogAddr(void)
 {
 	unsigned int temp;
-	temp = IN_KL01;
-	temp |= IN_KL02?2:0;
+	temp = IN_KL13;
+	temp |= IN_KL14?2:0;
 	return temp;
 }
 void GetInput(void)

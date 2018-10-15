@@ -48,6 +48,6 @@ EXTERN u16 mode_addr_err_timeout;
 EXTERN unsigned int wash_time; //3秒
 EXTERN unsigned int wipe_int_time;
 EXTERN unsigned int wipe_stop_time; //20秒
-EXTERN unsigned int wipe_wpp_time;//电机上电延迟时间 
+EXTERN unsigned int wipe_motoron_delay;//电机上电延迟时间 
 extern void GlobalParaInit(void);
 #endif

@@ -8,6 +8,8 @@
 #include "hal_port.h"
 #include "protocol.h" 
 #include "config.h"
+#include "CtrlOut.h"
+
 
                               
 ID_70_TYPE   ID_70x_data;
@@ -22,6 +24,8 @@ ID_73_TYPE   ID_78x_data;
 ID_73_TYPE   ID_79x_data;
 ID_73_TYPE   ID_7Ax_data;
 ID_73_TYPE   ID_7Bx_data;
+ID_56_TYPE   ID_56x_data;
+ID_57_TYPE   ID_57x_data;
 
 
 uint32_t ID_70x;
@@ -36,6 +40,10 @@ uint32_t ID_78x;
 uint32_t ID_79x;
 uint32_t ID_7Ax;
 uint32_t ID_7Bx;
+uint32_t ID_56x;
+uint32_t ID_57x;
+
+
 
 //====================================================================//
 static unsigned int GetHalAddr(void)
@@ -106,6 +114,8 @@ void ID_Select(int addr)
   ID_79x=ID_79x_BASE + addr;
   ID_7Ax=ID_7Ax_BASE + addr;
   ID_7Bx=ID_7Bx_BASE + addr;
+  ID_56x=ID_56x_BASE + addr;
+  ID_57x=ID_57x_BASE + addr;
 
   
   
@@ -114,7 +124,7 @@ void ID_Select(int addr)
 
 void can_receive_protocol(uint32_t ID,uint8_t mode,uint8_t length,uint8_t *data) 
 {
-	if (ID == ID_72x)
+	if ((ID == 0x721)||(ID == 0x722))//721前模块   722后模块
 	{
 		memcpy(&ID_72x_data,data,8);
 	}
@@ -154,18 +164,18 @@ void can_process1(void)
  hal_Can_SendData(ID_71x,STANDARD,0x03,8,&ID_71x_data); 
  
 }
-//!<AUIR3315 电流 比率 2800
+//!<50055 电流 比率 16000
 /**
- * Ir = Iif * 2800;
+ * Ir = Iif * 16000;
  * Iif = V/R;
  * 1bit = 5V/256;
  *      = 5V/R/256
- * R = 0.51K;
+ * R = 2K;
  * 1bit = 5/256/0.51 mA
  * n为采样点
- * ==> Ir = n * 5/256/0.51*2800mA = 107.2mA/bit
+ * ==> Ir = n * 5/256/2 *16000 mA = 156.25mA/bit
  */
-#define AUIR3315_Ratio  1072/10
+#define AUIR3315_Ratio  1562/10
 void Current_AUIR3315(void *des,void *src,int len)
 {
 	u8 *pOut = (u8 *)des;
@@ -210,6 +220,47 @@ void Current_BTS740(void *des,void *src,int len)
 		pOut[i++] =  (temp>>8)&0xFF;
 		*pIn++;
 	}
+}
+#define VERESION 100
+void can_send_message_Pout(void) {
+#if 1
+    ID_56x_data.gPout[0]= gPout.BYTES[0]; //(unsigned char) (128 * FPO8 + 64 * FPO7 + 32 * FPO6 + 16 * FPO5 + 8 * FPO4 + 4 * FPO3 + 2 * FPO2 + FPO1);
+    ID_56x_data.gPout[1] = gPout.BYTES[1]; //(unsigned char) (128 * OD + 64 * FPO15 + 32 * FPO14 + 16 * FPO13 + 8 * FPO12 + 4 * FPO11 + 2 * FPO10 + FPO9);
+    ID_56x_data.gPout[2] = gPout.BYTES[2];
+    ID_56x_data.gPout[3] = gPout.BYTES[3];
+    ID_56x_data.gPout[4] = gPout.BYTES[4];
+    ID_56x_data.gPout[5] = gPout.BYTES[5];	
+    ID_56x_data.pf8 = (pf[32]&0x03) +((pf[33] << 2) & 0x0c)+(pf[34] << 4 & 0x30)+(pf[35] << 6 & 0xc0);;
+    ID_56x_data.version= VERESION;
+
+   #endif
+    hal_Can_SendData(ID_56x,STANDARD,0x03,8,&ID_56x_data); 
+
+
+
+    // can1_send_message(0x560 + g, data, 8);
+}
+
+void can_send_message_Fout(void) {
+#if 1
+
+    ID_57x_data.pf[0] = (pf[0]&0x03) +((pf[1] << 2) & 0x0c)+(pf[2] << 4 & 0x30)+(pf[3] << 6 & 0xc0);
+    ID_57x_data.pf[1] = (pf[4]&0x03) +((pf[5] << 2) & 0x0c)+(pf[6] << 4 & 0x30)+(pf[7] << 6 & 0xc0);
+    ID_57x_data.pf[2]= (pf[8]&0x03) +((pf[9] << 2) & 0x0c)+(pf[10] << 4 & 0x30)+(pf[11] << 6 & 0xc0);
+    ID_57x_data.pf[3] = (pf[12]&0x03) +((pf[13] << 2) & 0x0c)+(pf[14] << 4 & 0x30)+(pf[15] << 6 & 0xc0);
+
+    ID_57x_data.pf[4] = (pf[16]&0x03) +((pf[17] << 2) & 0x0c)+(pf[18] << 4 & 0x30)+(pf[19] << 6 & 0xc0);
+    ID_57x_data.pf[5] = (pf[20]&0x03) +((pf[21] << 2) & 0x0c)+(pf[22] << 4 & 0x30)+(pf[23] << 6 & 0xc0);
+    ID_57x_data.pf[6]= (pf[24]&0x03) +((pf[25] << 2) & 0x0c)+(pf[26] << 4 & 0x30)+(pf[27] << 6 & 0xc0);
+    ID_57x_data.pf[7] = (pf[28]&0x03) +((pf[29] << 2) & 0x0c)+(pf[30] << 4 & 0x30)+(pf[31] << 6 & 0xc0);
+	
+    
+#endif
+    hal_Can_SendData(ID_57x,STANDARD,0x03,8,&ID_57x_data); 
+
+
+
+    // can1_send_message(0x560 + g, data, 8);
 }
 void can_process3(void) 
 {

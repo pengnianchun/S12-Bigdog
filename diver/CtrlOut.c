@@ -4,6 +4,7 @@
 #include "config.h"
 #include "ctrlin.h"
 
+
 //!<输出端子映射
 
 #define J2_07     Ctrl_Out32
@@ -94,14 +95,20 @@ void InitOutput(void)
 #define OPENLOAD_VALUE     6
 //#define PROTECT_THRESHOLD  60
 #define PROTECT_MAX_CNT    100
+//12 --1.8A
 
-unsigned char PROTECT_THRESHOLD[40]= {90,90,90,90,
+//23--3.6A
+//64--10A
+//115 -18A
+
+
+unsigned char PROTECT_THRESHOLD[40]= {12,90,90,90,
                                       60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,
                                       18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18
                                      };
-unsigned char pf[40]={0};
-static unsigned char pcnt[40]={0};
-unsigned int pcur[40]={0};
+unsigned char pf[40]={0};                 //故障保护缓存
+static unsigned char pcnt[40]={0}; //过载时间计数器
+unsigned int pcur[40]={0};                //输出电流缓存
 
 #if 1
 static void POUT_Protect(void)
@@ -112,12 +119,12 @@ static void POUT_Protect(void)
         dump = gPout.BYTES[j];
         for (i = 0; i < 8; i++)
         {
-            if ((dump & 0x01) == 1)  //一个AD值大约等于200mA
+            if ((dump & 0x01) == 1)  //一个AD值大约等于156.2mA
             {
-                if (pf[j * 8 + i] != 0x02)
+                if (pf[j * 8 + i] != 0x02)//没有故障
                 {
-                    pcur[j * 8 + i] = u16_admux_data[j * 8 + i + 1];
-                    if (pcnt[j * 8 + i] >= (PROTECT_MAX_CNT))
+                    pcur[j * 8 + i] = u16_admux_data[j * 8 + i + 1];//检测电流
+                    if (pcnt[j * 8 + i] >= (PROTECT_MAX_CNT))//100个周期电流都大于保护阈值1000ms
                     {
                         pout.BYTES[j] = (pout.BYTES[j] & ~(0x01 << i));//关闭输出
                         pf[j * 8 + i] = 0x02; //故障保护
@@ -125,14 +132,14 @@ static void POUT_Protect(void)
                     else
                     {
                         pout.BYTES[j]= (pout.BYTES[j] | (0x01 << i));//打开输出
-                        if (pcur[j * 8 + i] < OPENLOAD_VALUE) pf[j * 8 + i] = 0x01; //开路
+                        if (pcur[j * 8 + i] < OPENLOAD_VALUE) pf[j * 8 + i] = 0x01; //开路(输出小于1200mA)
                         else pf[j * 8 + i] = 0x00; //正常
                     }
-                    if (pcur[j * 8 + i] > (PROTECT_THRESHOLD[j * 8 + i]))
+                    if (pcur[j * 8 + i] > (PROTECT_THRESHOLD[j * 8 + i]))//检测输出电流过载的时间长度
                     {
                         pcnt[j * 8 + i]++;
                     }
-                    else
+                    else//恢复时间
                     {
                         if (pcnt[j * 8 + i] > 0) pcnt[j * 8 + i]--;
                     }
@@ -147,6 +154,12 @@ static void POUT_Protect(void)
             dump = dump >> 1;
         }
     }
+
+	if(pcnt[0]>200)
+		{
+	pcnt[1] = 0;
+
+	}
 	Ctrl_Out1 = pout.BITS.O1;
     Ctrl_Out2 = pout.BITS.O2;
     Ctrl_Out3 = pout.BITS.O3;
@@ -189,6 +202,34 @@ static void POUT_Protect(void)
 void RenovatingOutput(void)
 {
     u16 dty,per;
+    u8 i;
+
+
+		
+		gPout.BYTES[1]=ID_72x_data.out[1].Byte;
+		
+
+		for( i=3;i<6;i++){
+		
+		gPout.BYTES[i]=ID_72x_data.out[i].Byte;
+		
+	}
+ 	gPout.BITS.O2 =  ID_72x_data.out[0].Bits.bit1;
+	gPout.BITS.O3  =  ID_72x_data.out[0].Bits.bit2;
+ 	gPout.BITS.O5 =  ID_72x_data.out[0].Bits.bit3;
+	gPout.BITS.O6  =  ID_72x_data.out[0].Bits.bit4;
+ 	gPout.BITS.O7 =  ID_72x_data.out[0].Bits.bit5;
+	gPout.BITS.O8  =  ID_72x_data.out[0].Bits.bit6;
+
+	gPout.BITS.O17 =  ID_72x_data.out[2].Bits.bit0;
+	gPout.BITS.O18  =  ID_72x_data.out[2].Bits.bit1;
+ 	gPout.BITS.O19 =  ID_72x_data.out[2].Bits.bit2;
+	gPout.BITS.O20  =  ID_72x_data.out[2].Bits.bit3;
+ 	gPout.BITS.O21 =  ID_72x_data.out[2].Bits.bit4;
+	gPout.BITS.O22  =  ID_72x_data.out[2].Bits.bit5;
+	gPout.BITS.O24 =  ID_72x_data.out[2].Bits.bit7;
+
+	// gPout.BITS.O23 = 0;
     if (Select_addr != FRONT_MODULE_ADDR)
     {
         //!<用于雨刮，喷嘴控制。
@@ -201,57 +242,13 @@ void RenovatingOutput(void)
         rain_wape();
     }
 
-	for(i=0;i<5;i++){
-		gPout.BYTES[i]=ID_72x_data.out[i].Byte;
-	}
-	
-
-    /*gPout.BITS.O2   = ID_72x_data.out[0].Bits.bit1;
-    gPout.BITS.O3   = ID_72x_data.out[0].Bits.bit2;
-
-    gPout.BITS.O5   = ID_72x_data.out[0].Bits.bit4;
-    gPout.BITS.O6   = ID_72x_data.out[0].Bits.bit5;
-    gPout.BITS.O7   = ID_72x_data.out[0].Bits.bit6;
-    gPout.BITS.O8   = ID_72x_data.out[0].Bits.bit7;
-
-    gPout.BITS.O9   = ID_72x_data.out[1].Bits.bit0;
-    gPout.BITS.O10  = ID_72x_data.out[1].Bits.bit1;
-    gPout.BITS.O11  = ID_72x_data.out[1].Bits.bit2;
-    gPout.BITS.O12  = ID_72x_data.out[1].Bits.bit3;
-    gPout.BITS.O13  = ID_72x_data.out[1].Bits.bit4;
-    gPout.BITS.O14  = ID_72x_data.out[1].Bits.bit5;
-    gPout.BITS.O15  = ID_72x_data.out[1].Bits.bit6;
-    gPout.BITS.O16  = ID_72x_data.out[1].Bits.bit7;
-
-    gPout.BITS.O17  = ID_72x_data.out[2].Bits.bit0;
-    gPout.BITS.O18  = ID_72x_data.out[2].Bits.bit1;
-    gPout.BITS.O19  = ID_72x_data.out[2].Bits.bit2;
-    gPout.BITS.O20  = ID_72x_data.out[2].Bits.bit3;
-    gPout.BITS.O21  = ID_72x_data.out[2].Bits.bit4;
-    gPout.BITS.O22  = ID_72x_data.out[2].Bits.bit5;
-    gPout.BITS.O24  = ID_72x_data.out[2].Bits.bit7;
-
-    gPout.BITS.O25  = ID_72x_data.out[3].Bits.bit0;
-    gPout.BITS.O26  = ID_72x_data.out[3].Bits.bit1;
-    gPout.BITS.O27  = ID_72x_data.out[3].Bits.bit2;
-    gPout.BITS.O28  = ID_72x_data.out[3].Bits.bit3;
-    gPout.BITS.O29  = ID_72x_data.out[3].Bits.bit4;
-    gPout.BITS.O30  = ID_72x_data.out[3].Bits.bit5;
-    gPout.BITS.O31  = ID_72x_data.out[3].Bits.bit6;
-    gPout.BITS.O32  = ID_72x_data.out[3].Bits.bit7;
-
-    gPout.BITS.O33  = ID_72x_data.out[4].Bits.bit0;
-    gPout.BITS.O34  = ID_72x_data.out[4].Bits.bit1;
-    gPout.BITS.O35  = ID_72x_data.out[4].Bits.bit2;
-    gPout.BITS.O36  = ID_72x_data.out[4].Bits.bit3;*/
 
     POUT_Protect();   
-    //POD = gPout.BITS.OD;
 
 
     per = ID_72x_data.per[0] + ID_72x_data.per[1] *256;
     per = 50000u/per;
-    if(per == 0)
+    if(per == 0)//周期period
     {
         per = 1;
     }
@@ -269,6 +266,10 @@ void RenovatingOutput(void)
 #define RAIN_INTERVAL    (ID_72x_data.out[5].Bits.bit3)
 #define RAIN_SPRAY       (ID_72x_data.out[5].Bits.bit4)
 
+#define RAIN_SLOW_OUTbuffer gPout.BITS.O4
+#define RAIN_HIGH_OUTbuffer gPout.BITS.O1
+#define SPRAY_OUTbuffer  gPout.BITS.O23
+
 
 
 //雨刮程序
@@ -281,62 +282,68 @@ void rain_wape(void)
     //RAIN_SLOW	       雨刮慢档
     //RAIN_INTERVAL	   雨刮间歇档
     //RAIN_HIGH	       雨刮快档
-    //RAIN_SPRAY	   雨刮喷水档
 
     if (wipe_int_time > 0) wipe_int_time--; //雨刮间歇时间
     if (wash_time > 0) wash_time--; //雨刮洗涤时间
     if (wipe_stop_time > 0)wipe_stop_time--;
+	
 
     if (K_ON && RAIN_SLOW && !RAIN_HIGH && !RAIN_INTERVAL)  //慢档
     {
         if (DELAY_START == 0)
         {
             DELAY_START = 1;
-            wipe_wpp_time = WIPE_WPP_TIMEOUT;
+            wipe_motoron_delay = WIPE_WPP_TIMEOUT;//200ms等待后开始执行电机
         }
-        RAIN_INTERVAL_CTR = 0;
-        if (wipe_wpp_time == 0)
+        RAIN_FAST_CTL = 0;
+        if (wipe_motoron_delay == 0)
         {
-            SET_RAIN_INTERVAL_CTR2;
-            RAIN_SLOW_OUT = 1; //雨刮慢档电机
-            RAIN_HIGH_OUT = 0;
+            RAIN_SLOW_CTL = 1;
+            RAIN_SLOW_OUTbuffer = 1; //雨刮慢档电机
+            RAIN_HIGH_OUTbuffer = 0;
             wash_time = 0;
             DELAY_START = 0;
             DELAY_END = 0;
         }
     }
-    if (K_ON && RAIN_HIGH && !RAIN_INTERVAL)  //快档 快档慢档同时有效时，快档有效
+	
+/*********************************慢档工作处理完成*************************************/
+
+   if (K_ON && RAIN_HIGH && !RAIN_INTERVAL)  //快档 快档慢档同时有效时，快档有效
     {
         if (DELAY_START == 0)
         {
             DELAY_START = 1;
-            wipe_wpp_time = WIPE_WPP_TIMEOUT;
+            wipe_motoron_delay = WIPE_WPP_TIMEOUT;//200ms等待后开始执行电机
         }
-        RAIN_INTERVAL_CTR = 0;
-        if (wipe_wpp_time == 0)
+        RAIN_FAST_CTL = 0;
+        if (wipe_motoron_delay == 0)
         {
-            RAIN_SLOW_OUT = 0;
-            CLR_RAIN_INTERVAL_CTR2;
-            RAIN_HIGH_OUT = 1; //雨刮快档电机
+            RAIN_SLOW_OUTbuffer = 0;
+            RAIN_SLOW_CTL = 0;;
+            RAIN_HIGH_OUTbuffer = 1; //雨刮快档电机
             wash_time = 0;
             DELAY_START = 0;
             DELAY_END = 0;
         }
     }
+
+   /*********************************快档工作处理完成*************************************/
+   
     if (K_ON && RAIN_SPRAY)
     {
-        RAIN_INTERVAL_OUT = 1; //喷水电机
+        SPRAY_OUTbuffer = 1; //喷水电机
         if (DELAY_START == 0)
         {
             DELAY_START = 1;
-            wipe_wpp_time = WIPE_WPP_TIMEOUT;
+            wipe_motoron_delay = WIPE_WPP_TIMEOUT;//200ms等待后开始执行电机
         }
-        RAIN_INTERVAL_CTR = 0;
-        if (wipe_wpp_time == 0)
+        RAIN_FAST_CTL = 0;
+        if (wipe_motoron_delay == 0)
         {
-            SET_RAIN_INTERVAL_CTR2;
-            RAIN_SLOW_OUT = 1; //雨刮慢档电机
-            RAIN_HIGH_OUT = 0;
+            RAIN_SLOW_CTL = 1;;
+            RAIN_SLOW_OUTbuffer = 1; //雨刮慢档电机
+            RAIN_HIGH_OUTbuffer = 0;
             wash_time = WASH_TIMEOUT;
             DELAY_START = 0;
             DELAY_END = 0;
@@ -344,53 +351,51 @@ void rain_wape(void)
     }
     else
     {
-        if (wash_time <= 0) RAIN_INTERVAL_OUT = 0;
+        if (wash_time <= 0) SPRAY_OUTbuffer = 0;//喷水开关关闭
     }
     if (K_ON && !RAIN_SLOW && !RAIN_HIGH && RAIN_INTERVAL)  //间歇档
     {
+   
         if (wipe_int_time == 0)
         {
             if (DELAY_START == 0)
             {
                 DELAY_START = 1;
-                wipe_wpp_time = WIPE_WPP_TIMEOUT;
+                wipe_motoron_delay = WIPE_WPP_TIMEOUT;//200ms等待后开始执行电机
             }
-            RAIN_INTERVAL_CTR = 0;
-            if (wipe_wpp_time == 0)
+            RAIN_FAST_CTL = 0;
+	  
+            if (wipe_motoron_delay == 0)
             {
-                SET_RAIN_INTERVAL_CTR2;
-                RAIN_SLOW_OUT = 1;
-                RAIN_HIGH_OUT = 0;
+                RAIN_SLOW_CTL = 1;
+                RAIN_SLOW_OUTbuffer = 1;
+                RAIN_HIGH_OUTbuffer = 0;
                 wash_time = 0;
                 DELAY_START = 0;
                 DELAY_END = 0;
             }
         }
+
+		
     }
     //雨刮无操作，需要停止工作
     if (!K_ON || (!RAIN_SLOW && !RAIN_HIGH && !RAIN_INTERVAL && !RAIN_SPRAY && (wash_time == 0)))
     {
-        /*if (!HOME_VOL && wipe_stop_time > 0) {//雨刮半途掉电，上电可自动归位
-            RAIN_HIGH_OUT = 0;
-            RAIN_SLOW_OUT = 1;
-            RAIN_SPRAY = 0;
-            SET_RAIN_INTERVAL_CTR2;
-            wipe_int_time = 0;
-        }*/
+       
         if (!HOME_VOL && RAIN_HIGH_OUT && wipe_stop_time > 0)
         {
-            RAIN_HIGH_OUT = 0;
-            RAIN_SLOW_OUT = 1;
-            RAIN_INTERVAL_OUT = 0;
-            SET_RAIN_INTERVAL_CTR2;
+            RAIN_HIGH_OUTbuffer = 0;
+            RAIN_SLOW_OUTbuffer = 1;
+            SPRAY_OUT = 0;
+            RAIN_SLOW_CTL = 1;
             wipe_int_time = 0;
         }
         if (wipe_stop_time == 0)   //雨刮操作开关断开 20内强制关闭雨刮 保护雨刮电机
         {
-            RAIN_HIGH_OUT = 0;
-            RAIN_SLOW_OUT = 0;
-            RAIN_INTERVAL_OUT = 0;
-            SET_RAIN_INTERVAL_CTR2;
+            RAIN_HIGH_OUTbuffer = 0;
+            RAIN_SLOW_OUTbuffer = 0;
+            SPRAY_OUT = 0;
+            RAIN_SLOW_CTL = 1;
             wipe_int_time = 0;
         }
     }
@@ -399,29 +404,31 @@ void rain_wape(void)
         wipe_stop_time = WIPE_STOP_TIMEOUT;
     }
 
-    if (HOME_VOL == 1 && RAIN_RST == 0)  //雨刮复位开关 HOME_VOL==1
+    if (HOME_VOL == 1 && RAIN_RST == 0)  //雨刮复位开关 HOME_VOL==1  第一次到复位处
     {
         if (K_ON)
         {
             if (!RAIN_SLOW && !RAIN_HIGH && !RAIN_INTERVAL && !RAIN_SPRAY && (wash_time == 0))
             {
-                RAIN_HIGH_OUT = 0;
-                RAIN_SLOW_OUT = 0;
-                SET_RAIN_INTERVAL_CTR2;
+                RAIN_HIGH_OUTbuffer = 0;
+                RAIN_SLOW_OUTbuffer = 0;
+	       RAIN_FAST_CTL = 0;
+                RAIN_SLOW_CTL = 0;//--------------------------------
             }
             if (RAIN_INTERVAL)  //间歇
             {
-                RAIN_SLOW_OUT = 0;
-                SET_RAIN_INTERVAL_CTR2;
-                wipe_int_time = WIPE_INT_TIMEOUT;
+                RAIN_SLOW_OUTbuffer = 0;
+                RAIN_SLOW_CTL = 1;
+                wipe_int_time = WIPE_WPP_TIMEOUT;
+
             }
         }
         else
         {
-            RAIN_HIGH_OUT = 0;
-            RAIN_SLOW_OUT = 0;
-            RAIN_INTERVAL_OUT = 0;
-            SET_RAIN_INTERVAL_CTR2;
+            RAIN_HIGH_OUTbuffer = 0;
+            RAIN_SLOW_OUTbuffer = 0;
+            SPRAY_OUT = 0;
+            RAIN_SLOW_CTL = 1;
             wipe_int_time = 0;
         }
     }
@@ -433,11 +440,13 @@ void rain_wape(void)
             if (DELAY_END == 0)
             {
                 DELAY_END = 1;
-                wipe_wpp_time = WIPE_WPP_DISCHARGING;//打开放电延时时间为30-10=20ms,实际测量发现输出关短有10ms延时
+                wipe_motoron_delay = WIPE_WPP_DISCHARGING;//打开放电延时时间为30-10=20ms,实际测量发现输出关断有10ms延时
             }
-            if (wipe_wpp_time == 0)
+            if (wipe_motoron_delay == 0)
             {
-                RAIN_INTERVAL_CTR = 1;
+                RAIN_HIGH_OUT = 0;
+                RAIN_FAST_CTL = 1;
+	       RAIN_SLOW_CTL = 0;
                 DELAY_END = 0;
                 DELAY_START = 0;
             }
@@ -445,6 +454,7 @@ void rain_wape(void)
     }
 
     RAIN_RST = HOME_VOL;
+	
 }
 
 
@@ -452,7 +462,7 @@ void rain_wape(void)
 void wipe_delay(void)   //1ms
 {
 
-    if (wipe_wpp_time > 0)wipe_wpp_time--;//电机上电延迟时间
+    if (wipe_motoron_delay > 0)wipe_motoron_delay--;//电机上电延迟时间
 }
 
 

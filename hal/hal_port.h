@@ -46,6 +46,8 @@
 #define Ctrl_Out35         PTS_PTS0
 #define Ctrl_Out36         PORTD_PD1
 
+#define Ctrl_Out37         PTS_PTS4
+
 #define Ctrl_In1           PTJ_PTJ7
 #define Ctrl_In2           PTJ_PTJ6 
 #define Ctrl_ctr		   PTS_PTS3

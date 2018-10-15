@@ -2,10 +2,11 @@
   #define CTRL_OUT_H__
 #define RAIN_HIGH_OUT    	Ctrl_Out1
 #define RAIN_SLOW_OUT    	Ctrl_Out4
-#define RAIN_INTERVAL_OUT   Ctrl_Out23
-#define RAIN_INTERVAL_CTR   Ctrl_ctr   //刹车
-#define RAIN_INTERVAL_CTR2  
+#define SPRAY_OUT   Ctrl_Out23//喷水电机
+#define RAIN_FAST_CTL   Ctrl_ctr       //回流保护    快档电机
+#define RAIN_SLOW_CTL  Ctrl_Out37 //回流保护  慢档电机
 #define HOME_VOL		 (IN_KL03)
+
 
 #define SET_RAIN_INTERVAL_CTR2	do{PORTB_PB0 = 1;}while(0)
 #define CLR_RAIN_INTERVAL_CTR2  do{PORTB_PB0 = 0;}while(0)
@@ -15,7 +16,7 @@ void InitOutput(void);
 void rain_wape(void) ;
 typedef union
 { 
-    unsigned char BYTES[5];
+    unsigned char BYTES[6];
     struct 
     { 
         unsigned char O1:1; 
@@ -55,6 +56,15 @@ typedef union
         unsigned char O35:1; 
         unsigned char O36:1; 
         unsigned char reserve : 4;
+        unsigned char Qidong:1; 
+        unsigned char man:1; 
+		 unsigned char kuai:1; 
+		  unsigned char jianxi:1; 
+		   unsigned char penshui:1; 
+		    unsigned char res2:3; 
     } BITS; 
 } POUT; 
+
+extern unsigned char pf[40];
+extern POUT gPout;
 #endif

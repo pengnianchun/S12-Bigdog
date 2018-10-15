@@ -9,7 +9,7 @@
 
 #define LOCK_ADDR_TIMEOUT	500		//定义锁定地址时间，含义和时基有关
 #define ADDR_ERR_TIMEOUT    500
-#define FRONT_MODULE_ADDR	0x00    //前模块地址
+#define FRONT_MODULE_ADDR	0x721    //前模块地址
 #define WASH_TIMEOUT		300
 #define WIPE_INT_TIMEOUT    300
 #define WIPE_STOP_TIMEOUT   2000

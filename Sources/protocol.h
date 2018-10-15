@@ -15,7 +15,8 @@
 #define ID_79x_BASE	0x790
 #define ID_7Ax_BASE	0x7A0
 #define ID_7Bx_BASE	0x7B0
-
+#define ID_56x_BASE	0x560
+#define ID_57x_BASE	0x570
 
 typedef union {
       uint8_t Byte;
@@ -55,12 +56,27 @@ typedef struct
 {
    uint8_t AD[8];   
 }ID_73_TYPE;
+typedef struct 
+{
+   uint8_t gPout[6];  
+   uint8_t pf8;
+   uint8_t version;
+}ID_56_TYPE;
+typedef struct 
+{
+   uint8_t pf[8];   
+}ID_57_TYPE;
 
 extern ID_70_TYPE   ID_70x_data;
 
 extern ID_72_TYPE ID_72x_data;
+
+extern ID_56_TYPE ID_56x_data;
+extern ID_57_TYPE ID_57x_data;
 void can_receive_protocol(uint32_t ID,uint8_t mode,uint8_t length,uint8_t *data);
 void ID_Select(int addr);
+void can_send_message_Pout(void);
+void can_send_message_Fout(void);
 void can_process0(void) ;
 void can_process1(void) ;
 void can_process3(void) ;
